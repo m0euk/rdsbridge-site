@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>RDS Bridge — FM RDS decoder for SDR, in your browser</title>
+<meta name="description" content="A free, open-source FM RDS decoder that runs from a single HTML file in your browser. Decodes PS, PI, radiotext, AF and PTY from SDRplay via SDRConnect, from IQ recordings, from MPX composite, or from a networked rtl_tcp / SpyServer. Made by FM DXers, for FM DXers.">
+<link rel="canonical" href="https://rdsbridge.com/">
+<meta name="author" content="Graeme, M0EUK">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0f1316">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RDS Bridge">
+<meta property="og:url" content="https://rdsbridge.com/">
+<meta property="og:title" content="RDS Bridge — FM RDS decoder for SDR, in your browser">
+<meta property="og:description" content="A free, open-source FM RDS decoder in a single HTML file. SDRConnect, IQ recordings, MPX composite, or a networked SDR. Made by FM DXers, for FM DXers.">
+<meta property="og:image" content="https://rdsbridge.com/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RDS Bridge — FM RDS decoder for the browser">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RDS Bridge — FM RDS decoder for SDR, in your browser">
+<meta name="twitter:description" content="A free, open-source FM RDS decoder in a single HTML file. Made by FM DXers, for FM DXers.">
+<meta name="twitter:image" content="https://rdsbridge.com/assets/og.jpg">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/og.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "RDS Bridge",
+  "url": "https://rdsbridge.com/",
+  "applicationCategory": "MultimediaApplication",
+  "applicationSubCategory": "FM RDS decoder",
+  "operatingSystem": "Any (runs in a web browser). Optional helper for Windows, macOS, Linux.",
+  "browserRequirements": "A current Chromium-based browser",
+  "softwareHelp": "https://github.com/m0euk/RDS-Bridge",
+  "downloadUrl": "https://github.com/m0euk/RDS-Bridge/releases/latest",
+  "codeRepository": "https://github.com/m0euk/RDS-Bridge",
+  "programmingLanguage": ["JavaScript", "Go"],
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+  "author": { "@type": "Person", "name": "Graeme", "alternateName": "M0EUK" },
+  "description": "A free, open-source FM RDS decoder that runs from a single HTML file in a web browser. It decodes programme service name, PI code, PTY, radiotext and alternative frequencies from an SDRplay receiver via SDRConnect, from an IQ recording, from MPX composite audio, or from a networked rtl_tcp or SpyServer source.",
+  "featureList": [
+    "Programme service, PI, PTY, radiotext, alternative frequencies, TP/TA and clock time",
+    "PI stability voting with dominance, votes and rivals",
+    "Country from the decoded ECC, never inferred",
+    "DX log with CSV export including SNR, pilot, quality, FEC and time-to-ID",
+    "RF waterfall, MPX composite spectrum and 57 kHz constellation",
+    "Adjustable error correction depth and channel bandwidth for weak signals"
+  ]
+}
+</script>
+
+<style>
+:root{
+  /* sampled from the application itself */
+  --base:#0f1316;
+  --body:#10161a;
+  --panel:#13191e;
+  --panel-2:#161d23;
+  --rule:#202b31;
+  --teal:#16ded1;
+  --teal-dim:#126461;
+  --teal-wash:#0c2e31;
+  --amber:#f39d41;
+  --ink:#e4ecf0;
+  --muted:#8ea0aa;
+  --faint:#515f68;
+
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --pad:clamp(20px, 5vw, 40px);
+  --max:1240px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  color-scheme:dark;
+  margin:0; background:var(--base); color:var(--ink);
+  font-family:var(--sans); font-size:16.5px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%; height:auto; display:block}
+a{color:var(--teal); text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:2px}
+.skip{
+  position:absolute; left:-9999px; top:0; z-index:50;
+  font-family:var(--mono); font-size:13px; background:var(--teal); color:#06201e;
+  padding:10px 16px; border-radius:0 0 4px 0;
+}
+.skip:focus{left:0}
+
+.wrap{max-width:var(--max); margin:0 auto; padding-inline:var(--pad)}
+
+/* ---------- shared type devices ---------- */
+.eyebrow{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--faint);
+  margin:0 0 14px;
+}
+.rule{border:0; border-top:1px solid var(--rule); margin:0}
+
+h2{
+  font-family:var(--mono); font-weight:600;
+  font-size:clamp(21px,2.6vw,27px); letter-spacing:-.01em;
+  margin:0 0 10px; color:var(--ink);
+}
+h3{
+  font-family:var(--mono); font-weight:600; font-size:17px;
+  margin:0 0 8px; color:var(--ink);
+}
+p{margin:0 0 16px}
+.lede{font-size:clamp(17px,1.9vw,19.5px); color:var(--muted); max-width:64ch}
+.section{padding-block:clamp(56px,8vw,88px); border-top:1px solid var(--rule)}
+
+/* ---------- header ---------- */
+.masthead{
+  position:sticky; top:0; z-index:20;
+  background:rgba(15,19,22,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.masthead .wrap{display:flex; align-items:center; gap:24px; height:56px}
+.wordmark{
+  font-family:var(--mono); font-weight:700; font-size:15px;
+  letter-spacing:.16em; color:var(--ink); white-space:nowrap;
+}
+.wordmark em{font-style:normal; color:var(--teal)}
+.wordmark:hover{text-decoration:none}
+.status{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--teal);
+  border:1px solid var(--teal-dim); border-radius:999px;
+  padding:3px 10px 3px 8px; background:var(--teal-wash);
+}
+.status::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--teal); animation:blip 2.4s ease-in-out infinite;
+}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.25}}
+
+.nav{margin-left:auto; display:flex; gap:22px; align-items:center}
+.nav a{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+}
+.nav a:hover{color:var(--teal); text-decoration:none}
+@media (max-width:860px){ .nav .opt{display:none} .masthead .wrap{gap:14px} }
+@media (max-width:520px){ .status{display:none} }
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(48px,7vw,84px); padding-bottom:clamp(28px,4vw,44px)}
+.hero-grid{display:grid; gap:clamp(28px,4vw,56px); align-items:start}
+@media (min-width:1000px){ .hero-grid{grid-template-columns:minmax(0,1fr) 300px} }
+
+/* ident panel — the app's own read-out treatment */
+.ident{
+  border:1px solid var(--rule); border-radius:6px; background:var(--panel);
+  font-family:var(--mono); overflow:hidden;
+}
+.ident-head{
+  padding:9px 14px; border-bottom:1px solid var(--rule); background:var(--panel-2);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint);
+}
+.ident dl{margin:0; padding:4px 0}
+.ident div{display:flex; gap:14px; padding:8px 14px; align-items:baseline}
+.ident dt{
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--faint); width:82px; flex:none;
+}
+.ident dd{margin:0; font-size:13px; color:var(--ink)}
+.ident dd b{color:var(--teal); font-weight:600}
+.hero h1{margin:0 0 22px; line-height:1}
+.hero .mark{
+  display:block; font-family:var(--mono); font-weight:700;
+  font-size:clamp(40px,8.4vw,82px); letter-spacing:-.02em; color:var(--ink);
+}
+.hero .mark em{font-style:normal; color:var(--teal)}
+.hero .tag{
+  display:block; margin-top:16px;
+  font-family:var(--sans); font-weight:400;
+  font-size:clamp(18px,2.4vw,26px); line-height:1.35; color:var(--muted);
+  max-width:22ch;
+}
+.hero p.lede{max-width:60ch}
+
+.cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px}
+.btn{
+  font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.04em;
+  padding:11px 20px; border-radius:4px; border:1px solid var(--teal-dim);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn:hover{text-decoration:none}
+.btn--primary{background:var(--teal-dim); border-color:var(--teal); color:#eafffb}
+.btn--primary:hover{background:var(--teal); color:#06201e}
+.btn--ghost{background:transparent; color:var(--teal)}
+.btn--ghost:hover{background:var(--teal-wash)}
+.cta-note{
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+  margin:14px 0 0;
+}
+
+.shot{
+  margin:clamp(28px,4vw,44px) 0 0;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+  background:var(--body);
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9);
+}
+.shot img{width:100%}
+.shot figcaption{
+  font-family:var(--mono); font-size:11px; color:var(--faint);
+  padding:9px 14px; border-top:1px solid var(--rule); background:var(--panel);
+  letter-spacing:.04em;
+}
+
+/* ---------- signature: the DX log ---------- */
+.log{
+  border:1px solid var(--rule); border-radius:6px; background:var(--panel);
+  overflow:hidden; font-family:var(--mono);
+}
+.log-head{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px; border-bottom:1px solid var(--rule); background:var(--panel-2);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint);
+}
+.log-head .count{
+  color:var(--teal); border:1px solid var(--teal-dim); border-radius:3px;
+  padding:0 6px; letter-spacing:.06em;
+}
+.log-head .src{margin-left:auto; letter-spacing:.06em; text-transform:none}
+.log-row{padding:11px 14px; border-bottom:1px solid var(--rule)}
+.log-row:last-child{border-bottom:0}
+.log-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.log-freq{color:var(--teal); font-weight:700; font-size:15px}
+.log-pi{color:var(--amber); font-size:13px}
+.log-ps{color:var(--ink); font-weight:600; font-size:14px}
+.log-time{margin-left:auto; color:var(--faint); font-size:12px}
+.log-meta{color:var(--muted); font-size:12.5px; margin-top:3px}
+@media (max-width:600px){ .log-time{margin-left:0; width:100%} }
+
+/* ---------- modes ---------- */
+.modes{display:grid; gap:18px; margin-top:36px}
+@media (min-width:820px){ .modes{grid-template-columns:1fr 1fr} }
+.mode{
+  border:1px solid var(--rule); border-radius:6px; background:var(--panel);
+  padding:22px 22px 20px; position:relative;
+  display:flex; flex-direction:column;
+}
+.mode::before{
+  content:""; position:absolute; inset:0 auto 0 0; width:2px;
+  background:var(--teal-dim);
+}
+.mode .tab{
+  display:inline-block; align-self:flex-start; font-family:var(--mono); font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--teal);
+  border:1px solid var(--teal-dim); border-radius:3px; background:var(--teal-wash);
+  padding:3px 9px; margin-bottom:14px;
+}
+.mode p{font-size:15.5px; color:var(--muted); margin-bottom:14px}
+.mode .best{
+  font-family:var(--mono); font-size:12.5px; color:var(--faint);
+  border-top:1px solid var(--rule); padding-top:12px; margin:auto 0 0;
+}
+.mode .best b{color:var(--muted); font-weight:600}
+
+/* ---------- features ---------- */
+.feats{
+  list-style:none; padding:0; margin:32px 0 0;
+  display:grid; gap:1px; background:var(--rule);
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+}
+@media (min-width:700px){ .feats{grid-template-columns:1fr 1fr} }
+.feats li{background:var(--panel); padding:18px 20px}
+.feats b{
+  display:block; font-family:var(--mono); font-size:13px; font-weight:600;
+  color:var(--ink); margin-bottom:4px;
+}
+.feats span{font-size:14.5px; color:var(--muted)}
+
+/* ---------- callout ---------- */
+.callout{
+  border:1px solid var(--teal-dim); border-left-width:3px; border-radius:4px;
+  background:var(--teal-wash); padding:20px 22px; margin:32px 0 0;
+}
+.callout p{margin:0; color:var(--ink); font-size:15.5px}
+.callout .k{font-family:var(--mono); color:var(--teal)}
+
+/* ---------- plain notes list ---------- */
+.notes{list-style:none; padding:0; margin:28px 0 0; max-width:70ch}
+.notes li{
+  padding:14px 0 14px 20px; border-top:1px solid var(--rule);
+  color:var(--muted); font-size:15.5px; position:relative;
+}
+.notes li::before{
+  content:"·"; position:absolute; left:2px; top:12px;
+  color:var(--teal); font-family:var(--mono); font-size:18px;
+}
+.notes b{color:var(--ink); font-weight:600}
+
+/* ---------- contact ---------- */
+.contacts{
+  display:grid; gap:1px; background:var(--rule); margin-top:32px;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+}
+@media (min-width:700px){ .contacts{grid-template-columns:repeat(3,1fr)} }
+.contacts div{background:var(--panel); padding:20px}
+.contacts .lbl{
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--faint); margin-bottom:8px;
+}
+.contacts a{font-family:var(--mono); font-size:14px; word-break:break-word}
+.contacts p{font-size:13.5px; color:var(--faint); margin:6px 0 0}
+
+/* ---------- footer ---------- */
+.foot{
+  border-top:1px solid var(--rule); padding-block:34px;
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+}
+.foot .row{display:flex; flex-wrap:wrap; gap:16px 26px; align-items:center}
+.foot a{color:var(--muted)}
+.foot a:hover{color:var(--teal)}
+.foot .fine{margin:18px 0 0; max-width:80ch; line-height:1.7}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+
+<body>
+
+<a class="skip" href="#what">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="/">RDS <em>BRIDGE</em></a>
+    <span class="status">Decoding</span>
+    <nav class="nav">
+      <a class="opt" href="#modes">Modes</a>
+      <a class="opt" href="#helper">Helper</a>
+      <a class="opt" href="#honest">Small print</a>
+      <a href="#contact">Contact</a>
+      <a href="https://github.com/m0euk/RDS-Bridge">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Free · Open source · MIT · Built by M0EUK</p>
+        <h1>
+          <span class="mark">RDS <em>BRIDGE</em></span>
+          <span class="tag">An FM RDS decoder that runs in your browser.</span>
+        </h1>
+        <p class="lede">
+          One HTML file. Download it, double-click it, and it opens in your browser and starts
+          decoding. There is no installer, no server and no account — and nothing leaves your
+          machine. It reads the RDS off an SDRplay receiver through SDRConnect, off an IQ
+          recording, off the composite MPX from any SDR application, or off a networked
+          rtl_tcp or SpyServer radio.
+        </p>
+
+        <div class="cta">
+          <a class="btn btn--primary" href="https://github.com/m0euk/RDS-Bridge/releases/latest">Download the latest release</a>
+          <a class="btn btn--ghost" href="https://github.com/m0euk/RDS-Bridge">Source and documentation</a>
+        </div>
+        <p class="cta-note">Grab <b>index.html</b> from the release. That's the install.</p>
+      </div>
+
+      <aside class="ident">
+        <div class="ident-head">Ident</div>
+        <dl>
+          <div><dt>Install</dt><dd><b>None</b> — open the file</dd></div>
+          <div><dt>Files</dt><dd>1 &nbsp;<span style="color:var(--faint)">index.html</span></dd></div>
+          <div><dt>Sources</dt><dd>4 &nbsp;<span style="color:var(--faint)">connection modes</span></dd></div>
+          <div><dt>Helper</dt><dd>Optional</dd></div>
+          <div><dt>Licence</dt><dd><b>MIT</b></dd></div>
+          <div><dt>Cost</dt><dd><b>Free</b></dd></div>
+          <div><dt>Telemetry</dt><dd>None</dd></div>
+        </dl>
+      </aside>
+    </div>
+
+    <figure class="shot">
+      <a href="/assets/rds-bridge-ui-2400.webp" aria-label="Open the screenshot full size"><img src="/assets/rds-bridge-ui-2400.webp"
+           srcset="/assets/rds-bridge-ui-1200.webp 1200w, /assets/rds-bridge-ui-2400.webp 2400w"
+           sizes="(max-width:1320px) 100vw, 1240px"
+           width="3054" height="1650" fetchpriority="high"
+           alt="The RDS Bridge interface decoding BBC Radio 3 on 92.100 MHz: programme service name BBC R3, PI code 0xC203, radiotext, an alternative frequency list, a live RF waterfall across the FM band, the MPX composite spectrum, the 57 kHz constellation, lock and quality read-outs, and a DX log."></a>
+      <figcaption>Bridge in Normal view, decoding BBC R3 on 92.100 MHz from an RSPdxR2 via SDRConnect. <span style="color:var(--muted)">Tap to enlarge.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ================= WHAT IT IS ================= -->
+  <section class="section wrap" id="what">
+    <p class="eyebrow">What it is</p>
+    <h2>An RDS decoder built for chasing weak signals</h2>
+    <p class="lede">
+      Bridge exists because catching a distant station is mostly a race against a signal that
+      won't stay. It shows the identity as it firms up — programme service, PI, PTY, radiotext,
+      alternative frequencies — and it shows you how much of that to believe, rather than
+      presenting a guess as a fact.
+    </p>
+
+    <div class="callout">
+      <p>
+        The decoder runs an <span class="k">NDA open-loop acquisition front-end</span> that
+        feed-forwards symbol timing, so it locks weak FM signals from cold without hunting.
+        That's the core of the project; everything else on the screen is there to tell you
+        what it's doing.
+      </p>
+    </div>
+
+    <!-- signature: a real log, exactly as the app writes it -->
+    <div class="log" style="margin-top:32px">
+      <div class="log-head">
+        <span>DX log</span><span class="count">138</span>
+        <span class="src">exports to CSV</span>
+      </div>
+      <div class="log-row">
+        <div class="log-top">
+          <span class="log-freq">92.1</span><span class="log-pi">0xC203</span>
+          <span class="log-ps">BBC R3</span><span class="log-time">07:01:50</span>
+        </div>
+        <div class="log-meta">19.6 dB · pilot 100% · Q 75% · FEC 46% · 0.4s to ID · Serious Classical</div>
+      </div>
+      <div class="log-row">
+        <div class="log-top">
+          <span class="log-freq">88.1</span><span class="log-pi">0xC202</span>
+          <span class="log-ps">BBC R2</span><span class="log-time">06:46:56 &nbsp;×4</span>
+        </div>
+        <div class="log-meta">12.9 dB · pilot 99% · Q 56% · FEC 73% · 0.8s to ID · Easy Listening</div>
+      </div>
+      <div class="log-row">
+        <div class="log-top">
+          <span class="log-freq">88.5</span><span class="log-pi">0xC202</span>
+          <span class="log-ps">BBC R2</span><span class="log-time">06:25:30 &nbsp;×4</span>
+        </div>
+        <div class="log-meta">51.6 dB · pilot 99% · Q 92% · FEC 3% · 0.2s to ID · Pop Music</div>
+      </div>
+    </div>
+    <p class="cta-note">Every catch is logged with the numbers that let you judge it later — including how long it took to give up its ID.</p>
+  </section>
+
+  <!-- ================= MODES ================= -->
+  <section class="section wrap" id="modes">
+    <p class="eyebrow">Four ways in</p>
+    <h2>Whatever your signal arrives on, Bridge decodes it</h2>
+    <p class="lede">
+      The four connection modes are the tabs down the left of the window. Pick the one that
+      matches your setup — everything to the right of them works the same way.
+    </p>
+
+    <div class="modes">
+
+      <article class="mode">
+        <span class="tab">SDRConnect</span>
+        <h3>Straight to the radio</h3>
+        <p>
+          Bridge talks to SDRConnect over its WebSocket API on your own machine. Choose the
+          device and the antenna, tune from the page, and watch the RF waterfall across the
+          band. Bridge's decode sits alongside SDRConnect's own built-in RDS in the same
+          window, so you can see the difference for yourself.
+        </p>
+        <p class="best"><b>Best for:</b> everyday DXing at an SDRplay RSPdx or RSPdxR2.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">IQ File</span>
+        <h3>Work the band after the event</h3>
+        <p>
+          Load an IQ recording and decode it as though it were live. The opening you recorded
+          at three in the morning can be worked properly at the weekend — one frequency at a
+          time, as many passes as you like, with the settings you wish you'd used.
+        </p>
+        <p class="best"><b>Best for:</b> post-processing band recordings; testing settings against a signal that never changes.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">MPX Stream</span>
+        <h3>Bring Bridge to the radio you already use</h3>
+        <p>
+          Feed Bridge the composite MPX from any SDR application through a virtual audio cable
+          — SDR Console, SDR++, whatever you run — and it decodes the 57 kHz subcarrier out of
+          the composite. The helper can tell Bridge what frequency you're tuned to, so the log
+          comes out right.
+        </p>
+        <p class="best"><b>Best for:</b> a receiver or an application Bridge doesn't talk to directly.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">Network SDR</span>
+        <h3>A radio in the loft, a decoder at the desk</h3>
+        <p>
+          The helper connects to an rtl_tcp or SpyServer source on your network and streams the
+          IQ to Bridge. With SpyServer it also relays a wideband FFT, which Bridge paints as
+          the RF waterfall. rtl_tcp doesn't offer one, so you get the decode without the
+          waterfall.
+        </p>
+        <p class="best"><b>Best for:</b> an RTL-SDR in the loft, or a SpyServer that isn't next to the computer.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+  <section class="section wrap" id="features">
+    <p class="eyebrow">On screen</p>
+    <h2>What Bridge shows you</h2>
+    <p class="lede">The same read-outs in every mode. Four display densities — Compact, Essentials, Normal and Advanced — so you can strip it back to the identity or open the whole instrument up.</p>
+
+    <ul class="feats">
+      <li><b>Identity</b><span>Programme service, PI, PTY, radiotext, alternative frequencies, TP/TA and clock time.</span></li>
+      <li><b>PI stability</b><span>Dominance, votes and rivals, so you can see how settled an ID is before you log it.</span></li>
+      <li><b>Country</b><span>Shown once the ECC actually decodes — never guessed from the PI.</span></li>
+      <li><b>DX log</b><span>Every catch with SNR, pilot, quality, FEC and time-to-ID. Exports to CSV.</span></li>
+      <li><b>Displays</b><span>RF waterfall, MPX composite spectrum and the 57 kHz constellation, live.</span></li>
+      <li><b>Weak-signal knobs</b><span>Error correction depth and channel bandwidth — the two worth trying on a stubborn signal.</span></li>
+      <li><b>DX mode</b><span>Commit a PI on the first read. Faster, and spurious PIs are expected — it's there when you want it.</span></li>
+      <li><b>Lock &amp; quality</b><span>Sync, pilot lock, data quality, recovered blocks, groups per second, subcarrier SNR.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= HELPER ================= -->
+  <section class="section wrap" id="helper">
+    <p class="eyebrow">Optional companion</p>
+    <h2>The helper</h2>
+    <p class="lede">
+      Two jobs a browser tab can't do on its own. You only need it for MPX Stream and
+      Network SDR — SDRConnect and IQ File don't use it at all. It's in the same release
+      as Bridge, so you're already in the right place.
+    </p>
+
+    <ul class="notes">
+      <li><b>Tells Bridge where you're tuned.</b> Your SDR application knows the frequency; Bridge doesn't. The helper passes it across so MPX Stream logs the right frequency.</li>
+      <li><b>Streams IQ from a networked radio.</b> It connects to rtl_tcp or SpyServer and hands the IQ to Bridge to decode.</li>
+      <li><b>One small program, no installer.</b> A single file for Windows, macOS (Intel and Apple Silicon) and Linux. Run it, and it opens its own settings page in your browser.</li>
+      <li><b>It never touches the decoder.</b> The helper carries data to Bridge; the decoding all happens in the browser.</li>
+      <li><b>Take both from the same release.</b> Bridge and the helper are a matched pair. Mixing one release's helper with another's Bridge won't raise a polite error — it will just decode nonsense, so don't.</li>
+    </ul>
+
+    <div class="cta">
+      <a class="btn btn--ghost" href="https://github.com/m0euk/RDS-Bridge/releases/latest">Get the helper — same release as Bridge</a>
+    </div>
+    <p class="cta-note">Windows, macOS (Intel and Apple Silicon) and Linux. macOS needs one extra step the first time you run it; the release notes have it.</p>
+  </section>
+
+  <!-- ================= SMALL PRINT ================= -->
+  <section class="section wrap" id="honest">
+    <p class="eyebrow">Before you download</p>
+    <h2>What this is, and what it isn't</h2>
+    <p class="lede">
+      Bridge is a hobby project made by an FM DXer for FM DXers. It is not a commercial
+      product and it isn't pretending to be one.
+    </p>
+
+    <ul class="notes">
+      <li><b>It's experimental, and it changes.</b> Development is ongoing and often quick. Features arrive, get reworked, and occasionally get taken back out again.</li>
+      <li><b>There's no warranty, express or implied.</b> It's offered as-is under the MIT licence. If it misbehaves on your machine, that's the deal you're getting for free.</li>
+      <li><b>No support contract, no promised roadmap.</b> Bugs and ideas are welcome and often get acted on, but nothing here is a commitment and nothing has a date on it.</li>
+      <li><b>Free, and it stays that way.</b> No cost, no account, no telemetry. Nothing phones home. The whole source is on GitHub — read it before you run it if you like.</li>
+      <li><b>It decodes as fast as your machine can decimate.</b> On a wide recording, a slower machine may not keep up with real time — Bridge measures it and tells you when that happens. The decode itself is unaffected either way; it's the audio that stutters, not the RDS.</li>
+    </ul>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="section wrap" id="contact">
+    <p class="eyebrow">Get in touch</p>
+    <h2>Questions, catches, and bug reports</h2>
+    <p class="lede">If you're using Bridge to chase signals, I'd like to hear about it — especially when it doesn't work.</p>
+
+    <div class="contacts">
+      <div>
+        <div class="lbl">Discord</div>
+        <a href="https://discord.gg/dNuqXhVyPt">Join the server</a>
+        <p>Chat, settings help, and the odd screenshot of something rare.</p>
+      </div>
+      <div>
+        <div class="lbl">Email</div>
+        <a href="mailto:info@rdsbridge.com">info@rdsbridge.com</a>
+        <p>For anything that doesn't suit a public thread.</p>
+      </div>
+      <div>
+        <div class="lbl">Bugs &amp; ideas</div>
+        <a href="https://github.com/m0euk/RDS-Bridge/issues">GitHub Issues</a>
+        <p>The best place for a fault — it doesn't get lost.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <span>RDS Bridge — built by Graeme, <b>M0EUK</b></span>
+      <a href="https://github.com/m0euk/RDS-Bridge">GitHub</a>
+      <a href="https://github.com/m0euk/RDS-Bridge/releases/latest">Releases</a>
+      <a href="https://github.com/m0euk/RDS-Bridge/blob/main/LICENSE">MIT licence</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <p class="fine">
+      Provided as-is, without warranty of any kind, express or implied. An independent hobby
+      project: not affiliated with, endorsed by, or supported by SDRplay, Airspy, or any
+      broadcaster. Station names, PI codes and screenshots are shown as received off air.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
