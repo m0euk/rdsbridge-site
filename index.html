@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>RDS Bridge — FM RDS decoder for SDR, in your browser</title>
-<meta name="description" content="A free, open-source FM RDS decoder that runs from a single HTML file in your browser. Decodes PS, PI, radiotext, AF and PTY from SDRplay via SDRConnect, from IQ recordings, from MPX composite, or from a networked rtl_tcp / SpyServer. Made by FM DXers, for FM DXers.">
+<meta name="description" content="A free, open-source FM RDS decoder that runs from a single HTML file in your browser. Decodes PS, PI, radiotext, AF and PTY from SDRplay via SDRConnect, from IQ recordings, from MPX composite, or from a networked rtl_tcp / SpyServer. Scans the whole FM band automatically and logs every RDS station. Made by FM DXers, for FM DXers.">
 <link rel="canonical" href="https://rdsbridge.com/">
 <meta name="author" content="Graeme, M0EUK">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -55,12 +55,13 @@
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
   "author": { "@type": "Person", "name": "Graeme", "alternateName": "M0EUK" },
-  "description": "A free, open-source FM RDS & RBDS decoder that runs from a single HTML file in a web browser. It decodes programme service name, PI code, PTY, radiotext and alternative frequencies from an SDRplay receiver via SDRConnect, from an IQ recording, from MPX composite audio, or from a networked rtl_tcp or SpyServer source.",
+  "description": "A free, open-source FM RDS & RBDS decoder that runs from a single HTML file in a web browser. It decodes programme service name, PI code, PTY, radiotext and alternative frequencies from an SDRplay receiver via SDRConnect, from an IQ recording, from MPX composite audio, or from a networked rtl_tcp or SpyServer source. In SDRConnect mode it can also sweep the whole FM band automatically, logging every station that decodes RDS.",
   "featureList": [
     "Programme service, PI, PTY, radiotext, alternative frequencies, TP/TA and clock time",
     "PI stability voting with dominance, votes and rivals",
     "Country from the decoded ECC, never inferred",
     "DX log with CSV export including SNR, pilot, quality, FEC and time-to-ID",
+    "Automatic band scan that sweeps the FM band and logs every station that decodes RDS",
     "RF waterfall, MPX composite spectrum and 57 kHz constellation",
     "Adjustable error correction depth and channel bandwidth for weak signals"
   ]
@@ -359,6 +360,7 @@ p{margin:0 0 16px}
     <span class="status">Decoding</span>
     <nav class="nav">
       <a class="opt" href="#modes">Modes</a>
+      <a class="opt" href="#scan">Scan</a>
       <a class="opt" href="#helper">Helper</a>
       <a class="opt" href="#honest">Small print</a>
       <a href="#contact">Contact</a>
@@ -529,6 +531,68 @@ p{margin:0 0 16px}
       </article>
 
     </div>
+  </section>
+
+  <!-- ================= SCAN ================= -->
+  <section class="section wrap" id="scan">
+    <p class="eyebrow">Work the whole band</p>
+    <h2>Let it find the stations for you</h2>
+    <p class="lede">
+      In SDRConnect mode Bridge can sweep the FM band on its own. It reads the carriers off the
+      RF spectrum, tunes each one, and logs the ones that actually decode RDS — through the same
+      PI commit guard as everywhere else, so a scan can't invent a station. Catches stream into
+      the DX log as it goes, strongest first.
+    </p>
+
+    <div class="modes">
+
+      <article class="mode">
+        <span class="tab">Full band</span>
+        <h3>One pass, everything logged</h3>
+        <p>
+          Sweep the band once from 87.5 to 108 and log every station it finds. The quickest way
+          to see what's actually on air right now, without touching the dial yourself.
+        </p>
+        <p class="best"><b>Best for:</b> a snapshot of the whole band, or checking an opening as it builds.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">DX watch</span>
+        <h3>Loop the band, chase what's new</h3>
+        <p>
+          Sweep the whole band on a loop, skipping your skip-list, your locals, the empty
+          channels and the carriers it has learned are dead — so each pass spends its time on
+          what's changing. A signal you've already caught is never auto-skipped.
+        </p>
+        <p class="best"><b>Best for:</b> leaving it running through an opening to catch stations as they surface.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">Watch list</span>
+        <h3>Keep an eye on your spots</h3>
+        <p>
+          Rapid-loop just the frequencies you name — the clear DX spots you want checked often —
+          with the odd full-band sweep folded in so you don't miss an opening somewhere else.
+        </p>
+        <p class="best"><b>Best for:</b> monitoring a handful of known frequencies for the moment a distant station comes up.</p>
+      </article>
+
+    </div>
+
+    <div class="callout">
+      <p>
+        The scan needs a live <span class="k">SDRConnect</span> stream with hardware control,
+        because it tunes the radio for you — press <span class="k">Start</span> first. The
+        decoder is the detector: every catch is a real RDS decode through the normal commit
+        guard, never a guess from the spectrum.
+      </p>
+    </div>
+
+    <ul class="notes">
+      <li><b>A persistent skip-list.</b> Keep the scan off your locals for good — type frequencies in, tick “skip” on a DX-log row, or add every catch at once. It's remembered between sessions.</li>
+      <li><b>It learns as it goes.</b> Channels that turn up empty or carry no RDS get set aside within the session, so each loop is quicker than the last.</li>
+      <li><b>See exactly what it's doing.</b> An optional verbose log shows every channel the scan checks and what it decided — logged, empty, dead carrier or skipped.</li>
+    </ul>
   </section>
 
   <!-- ================= FEATURES ================= -->
