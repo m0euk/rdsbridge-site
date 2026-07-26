@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>RDS Bridge — FM RDS decoder for SDR, in your browser</title>
-<meta name="description" content="A free, open-source FM RDS decoder that runs from a single HTML file in your browser. Decodes PS, PI, radiotext, AF and PTY from SDRplay via SDRConnect, from IQ recordings, from MPX composite, or from a networked rtl_tcp / SpyServer. Scans the whole FM band automatically and logs every RDS station. Made by FM DXers, for FM DXers.">
+<meta name="description" content="A free, open-source FM RDS decoder that runs from a single HTML file in your browser. Decodes PS, PI, radiotext, AF and PTY from SDRplay via SDRConnect, from IQ recordings, from MPX composite, or from a networked rtl_tcp / SpyServer. Scans the whole FM band automatically, maps a whole IQ recording as a frequency-by-time picture, and logs every RDS station. Made by FM DXers, for FM DXers.">
 <link rel="canonical" href="https://rdsbridge.com/">
 <meta name="author" content="Graeme, M0EUK">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -361,6 +361,7 @@ p{margin:0 0 16px}
     <span class="status">Decoding</span>
     <nav class="nav">
       <a class="opt" href="#modes">Modes</a>
+      <a class="opt" href="#map">Band map</a>
       <a class="opt" href="#scan">Scan</a>
       <a class="opt" href="#helper">Helper</a>
       <a class="opt" href="#honest">Small print</a>
@@ -386,7 +387,8 @@ p{margin:0 0 16px}
           decoding. There is no installer, no server and no account — and nothing leaves your
           machine. It reads the RDS (and RBDS) off an SDRplay receiver through SDRConnect, off an IQ
           recording, off the composite MPX from any SDR application, or off a networked
-          rtl_tcp or SpyServer radio.
+          rtl_tcp or SpyServer radio. Hand it a band recording and it will map the whole thing
+          as a picture, so an opening you slept through is something you can see.
         </p>
 
         <div class="cta">
@@ -502,7 +504,8 @@ p{margin:0 0 16px}
         <p>
           Load an IQ recording and decode it as though it were live. The opening you recorded
           at three in the morning can be worked properly at the weekend — one frequency at a
-          time, as many passes as you like, with the settings you wish you'd used.
+          time, as many passes as you like, with the settings you wish you'd used. Or
+          <a href="#map">map the whole recording first</a> and go straight to what was there.
         </p>
         <p class="best"><b>Best for:</b> post-processing band recordings; testing settings against a signal that never changes.</p>
       </article>
@@ -532,6 +535,62 @@ p{margin:0 0 16px}
       </article>
 
     </div>
+  </section>
+
+  <!-- ================= BAND MAP ================= -->
+  <section class="section wrap" id="map">
+    <p class="eyebrow">Recordings, mapped</p>
+    <h2>See a whole recording at once</h2>
+    <p class="lede">
+      A band recording holds far more than you heard while it was playing. The band map turns one into a
+      picture — time running down the page, channels running across, each cell showing how far that channel
+      stood above its own noise floor at that moment. A two-minute opening on 90.7, half an hour in, becomes
+      something you can see rather than something you had to be listening for.
+    </p>
+
+    <div class="modes">
+
+      <article class="mode">
+        <span class="tab">Build</span>
+        <h3>Seconds, not a re-listen</h3>
+        <p>
+          The map samples the file rather than reading it end to end, so even a very large capture maps
+          quickly. A 66 GB, 32-minute, 9 MHz recording built a 91-channel by 396-row map in about 1.4
+          seconds on an Apple Silicon Mac mini — that machine's figure, not a promise about yours.
+        </p>
+        <p class="best"><b>Best for:</b> finding out what is actually in a recording before deciding how to work it.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">Click</span>
+        <h3>Straight to the moment</h3>
+        <p>
+          Click any cell and the recording seeks to that time, tunes that channel and starts playing with
+          the audio armed. A playhead marks the time you're at and the channel you're on, follows the
+          playback, and gets out of the way as soon as you scroll off to read the map.
+        </p>
+        <p class="best"><b>Best for:</b> working the lit cells one at a time instead of hunting for them.</p>
+      </article>
+
+      <article class="mode">
+        <span class="tab">Loop</span>
+        <h3>Another go at a marginal signal</h3>
+        <p>
+          Mark a start and an end and loop that stretch of the recording, with the looped section drawn on
+          the map. Each pass restarts the decoder deliberately, so one realisation of noise can't vote for
+          the same spurious PI on every lap.
+        </p>
+        <p class="best"><b>Best for:</b> a station that nearly identified itself and then faded.</p>
+      </article>
+
+    </div>
+
+    <ul class="notes">
+      <li><b>Your DX log, on the map.</b> Catches you already made from that recording appear as rings — so a bright column with no ring is something you haven't identified yet.</li>
+      <li><b>The capture roll-off is marked, not trimmed.</b> Channels out at the edges of the recording are real and worth checking. They read low, which is not the same as being empty.</li>
+      <li><b>It's a presence map, not a signal meter.</b> Brightness is measured against each row's own noise floor, so the shades don't compare between one recording and another. It answers “was anything here?” — identifying a station still means playing it.</li>
+      <li><b>IQ File mode only.</b> Building the map means seeking around a file, which a live stream can't do.</li>
+    </ul>
   </section>
 
   <!-- ================= SCAN ================= -->
@@ -606,7 +665,9 @@ p{margin:0 0 16px}
       <li><b>Identity</b><span>Programme service, PI, PTY, radiotext, alternative frequencies, TP/TA and clock time.</span></li>
       <li><b>PI stability</b><span>Dominance, votes and rivals, so you can see how settled an ID is before you log it.</span></li>
       <li><b>Country</b><span>Shown once the ECC actually decodes — never guessed from the PI.</span></li>
-      <li><b>DX log</b><span>Every catch with SNR, pilot, quality, FEC and time-to-ID. Exports to CSV.</span></li>
+      <li><b>DX log</b><span>Every catch with SNR, pilot, quality, FEC and time-to-ID. Exports to CSV, and a delete or a clear can be undone — even after a reload.</span></li>
+      <li><b>Band map</b><span>A whole IQ recording as a frequency-by-time picture, with click-to-play, a playhead and section looping.</span></li>
+      <li><b>Self-check</b><span>One button that tests your browser, confirms your copy is complete and unmodified, and proves the decoder works on a synthetic signal — then writes a plain-language report you can read or send on. Nothing is sent automatically.</span></li>
       <li><b>Displays</b><span>RF waterfall, MPX composite spectrum and the 57 kHz constellation, live.</span></li>
       <li><b>Pano view</b><span>The identity cards over a full-height RF waterfall with adjustable time-depth — a band-watching layout for spotting openings.</span></li>
       <li><b>Weak-signal knobs</b><span>Error correction depth and channel bandwidth — the two worth trying on a stubborn signal.</span></li>
