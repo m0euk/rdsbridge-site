@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z8G6PVKERS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Z8G6PVKERS');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Getting started with RDS Bridge — a step-by-step guide</title>
+<meta name="description" content="A complete, plain-English guide to RDS Bridge: what it is, which connection mode suits your radio, and step-by-step instructions for SDRConnect, IQ recordings, MPX composite and networked SDRs — plus the band scan, the band map, the DX log and what to do when something isn't working.">
+<link rel="canonical" href="https://rdsbridge.com/guide/">
+<meta name="author" content="Graeme, M0EUK">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0f1316">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="RDS Bridge">
+<meta property="og:url" content="https://rdsbridge.com/guide/">
+<meta property="og:title" content="Getting started with RDS Bridge">
+<meta property="og:description" content="Which mode suits your radio, and exactly what to click. A plain-English guide with pictures.">
+<meta property="og:image" content="https://rdsbridge.com/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RDS Bridge — FM RDS decoder for the browser">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Getting started with RDS Bridge">
+<meta name="twitter:description" content="Which mode suits your radio, and exactly what to click. A plain-English guide with pictures.">
+<meta name="twitter:image" content="https://rdsbridge.com/assets/og.jpg">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/og.jpg">
+
+<style>
+:root{
+  /* sampled from the application itself — keep in step with the home page */
+  --base:#0f1316;
+  --body:#10161a;
+  --panel:#13191e;
+  --panel-2:#161d23;
+  --rule:#202b31;
+  --teal:#16ded1;
+  --teal-dim:#126461;
+  --teal-wash:#0c2e31;
+  --amber:#f39d41;
+  --ink:#e4ecf0;
+  --muted:#8ea0aa;
+  --faint:#515f68;
+
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --pad:clamp(20px, 5vw, 40px);
+  --max:1240px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  color-scheme:dark;
+  margin:0; background:var(--base); color:var(--ink);
+  font-family:var(--sans); font-size:16.5px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%; height:auto; display:block}
+a{color:var(--teal); text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--teal); outline-offset:3px; border-radius:2px}
+.skip{
+  position:absolute; left:-9999px; top:0; z-index:50;
+  font-family:var(--mono); font-size:13px; background:var(--teal); color:#06201e;
+  padding:10px 16px; border-radius:0 0 4px 0;
+}
+.skip:focus{left:0}
+
+.wrap{max-width:var(--max); margin:0 auto; padding-inline:var(--pad)}
+.narrow{max-width:78ch}
+
+/* ---------- shared type devices ---------- */
+.eyebrow{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--faint);
+  margin:0 0 14px;
+}
+h2{
+  font-family:var(--mono); font-weight:600;
+  font-size:clamp(21px,2.6vw,27px); letter-spacing:-.01em;
+  margin:0 0 10px; color:var(--ink);
+}
+h3{
+  font-family:var(--mono); font-weight:600; font-size:17px;
+  margin:0 0 8px; color:var(--ink);
+}
+h4{
+  font-family:var(--mono); font-weight:600; font-size:14px;
+  margin:28px 0 8px; color:var(--ink);
+}
+p{margin:0 0 16px}
+.lede{font-size:clamp(17px,1.9vw,19.5px); color:var(--muted); max-width:64ch}
+.section{padding-block:clamp(48px,7vw,76px); border-top:1px solid var(--rule); scroll-margin-top:70px}
+
+/* ---------- header ---------- */
+.masthead{
+  position:sticky; top:0; z-index:20;
+  background:rgba(15,19,22,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.masthead .wrap{display:flex; align-items:center; gap:24px; height:56px}
+.wordmark{
+  font-family:var(--mono); font-weight:700; font-size:15px;
+  letter-spacing:.16em; color:var(--ink); white-space:nowrap;
+}
+.wordmark em{font-style:normal; color:var(--teal)}
+.wordmark:hover{text-decoration:none}
+.status{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--teal);
+  border:1px solid var(--teal-dim); border-radius:999px;
+  padding:3px 10px 3px 8px; background:var(--teal-wash);
+}
+.nav{margin-left:auto; display:flex; gap:22px; align-items:center}
+.nav a{
+  font-family:var(--mono); font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--faint);
+}
+.nav a:hover{color:var(--teal); text-decoration:none}
+.nav a.here{color:var(--teal)}
+@media (max-width:860px){ .nav .opt{display:none} .masthead .wrap{gap:14px} }
+@media (max-width:520px){ .status{display:none} }
+
+/* ---------- hero ---------- */
+.hero{padding-top:clamp(40px,6vw,68px); padding-bottom:clamp(20px,3vw,32px)}
+.hero h1{margin:0 0 20px; line-height:1.05}
+.hero .mark{
+  display:block; font-family:var(--mono); font-weight:700;
+  font-size:clamp(32px,6vw,58px); letter-spacing:-.02em; color:var(--ink);
+}
+.hero .mark em{font-style:normal; color:var(--teal)}
+
+/* ---------- buttons ---------- */
+.cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:26px}
+.btn{
+  font-family:var(--mono); font-size:13px; font-weight:600; letter-spacing:.04em;
+  padding:11px 20px; border-radius:4px; border:1px solid var(--teal-dim);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn:hover{text-decoration:none}
+.btn--primary{background:var(--teal-dim); border-color:var(--teal); color:#eafffb}
+.btn--primary:hover{background:var(--teal); color:#06201e}
+.btn--ghost{background:transparent; color:var(--teal)}
+.btn--ghost:hover{background:var(--teal-wash)}
+
+/* ---------- screenshots ---------- */
+.shot{
+  margin:clamp(22px,3vw,32px) 0;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+  background:var(--body);
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9);
+}
+.shot img{width:100%}
+.shot figcaption{
+  font-family:var(--mono); font-size:11px; color:var(--faint);
+  padding:9px 14px; border-top:1px solid var(--rule); background:var(--panel);
+  letter-spacing:.04em; line-height:1.6;
+}
+.shot--panel{margin-left:auto; margin-right:auto}
+
+/* ---------- contents ---------- */
+.toc{
+  border:1px solid var(--rule); border-radius:6px; background:var(--panel);
+  padding:18px 22px; margin:34px 0 0;
+}
+.toc p{
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--faint); margin:0 0 12px;
+}
+.toc ol{
+  margin:0; padding:0; list-style:none;
+  display:grid; gap:6px 26px; counter-reset:toc;
+}
+@media (min-width:760px){ .toc ol{grid-template-columns:1fr 1fr} }
+.toc li{counter-increment:toc; font-size:15px}
+.toc li::before{
+  content:counter(toc,decimal-leading-zero); font-family:var(--mono);
+  font-size:11px; color:var(--faint); margin-right:10px;
+}
+
+/* ---------- the chooser ---------- */
+.pick{
+  display:grid; gap:1px; background:var(--rule); margin-top:32px;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+}
+.pick > div{
+  background:var(--panel); padding:20px 22px;
+  display:grid; gap:6px 22px; align-items:start;
+}
+@media (min-width:820px){ .pick > div{grid-template-columns:minmax(0,1fr) 220px} }
+.pick .have{font-size:15.5px; color:var(--ink); margin:0}
+.pick .have b{color:var(--ink); font-weight:600}
+.pick .go{margin:0; font-family:var(--mono); font-size:13px}
+.pick .go .tab{
+  display:inline-block; font-size:11px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--teal);
+  border:1px solid var(--teal-dim); border-radius:3px; background:var(--teal-wash);
+  padding:3px 9px; margin-bottom:4px;
+}
+.pick .go span{display:block; color:var(--faint); font-size:12px}
+
+/* ---------- numbered steps ---------- */
+.steps{
+  counter-reset:step; list-style:none; padding:0;
+  margin:28px 0 0; max-width:76ch;
+}
+.steps > li{
+  counter-increment:step; position:relative;
+  padding:0 0 22px 52px; border-left:1px solid var(--rule);
+  margin-left:15px;
+}
+.steps > li:last-child{border-left-color:transparent; padding-bottom:4px}
+.steps > li::before{
+  content:counter(step); position:absolute; left:-15px; top:-2px;
+  width:30px; height:30px; border-radius:50%;
+  background:var(--panel-2); border:1px solid var(--teal-dim); color:var(--teal);
+  font-family:var(--mono); font-size:13px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.steps > li > b{
+  display:block; font-family:var(--mono); font-size:15px; color:var(--ink);
+  margin:3px 0 6px;
+}
+.steps p{margin:0 0 10px; color:var(--muted); font-size:15.5px}
+.steps p:last-child{margin-bottom:0}
+.steps .shot{margin:14px 0 0}
+
+/* an in-app control, named exactly as it appears on screen */
+.ui{
+  font-family:var(--mono); font-size:.92em; font-weight:600;
+  color:var(--teal); background:var(--teal-wash);
+  border:1px solid var(--teal-dim); border-radius:3px; padding:1px 6px;
+  white-space:nowrap;
+}
+.path{font-family:var(--mono); font-size:.9em; color:var(--amber); word-break:break-word}
+
+/* ---------- callouts ---------- */
+.callout{
+  border:1px solid var(--teal-dim); border-left-width:3px; border-radius:4px;
+  background:var(--teal-wash); padding:18px 22px; margin:26px 0;
+  max-width:76ch;
+}
+.callout p{margin:0 0 12px; color:var(--ink); font-size:15.5px}
+.callout p:last-child{margin-bottom:0}
+.callout b{font-family:var(--mono); font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--teal)}
+.callout--warn{border-color:#7a5320; border-left-color:var(--amber); background:#241a0d}
+.callout--warn b{color:var(--amber)}
+
+/* ---------- plain notes list ---------- */
+.notes{list-style:none; padding:0; margin:24px 0 0; max-width:76ch}
+.notes li{
+  padding:14px 0 14px 20px; border-top:1px solid var(--rule);
+  color:var(--muted); font-size:15.5px; position:relative;
+}
+.notes li::before{
+  content:"·"; position:absolute; left:2px; top:12px;
+  color:var(--teal); font-family:var(--mono); font-size:18px;
+}
+.notes b{color:var(--ink); font-weight:600}
+
+/* ---------- read-out glossary ---------- */
+.gloss{
+  display:grid; gap:1px; background:var(--rule); margin-top:28px;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+}
+@media (min-width:700px){ .gloss{grid-template-columns:1fr 1fr} }
+.gloss div{background:var(--panel); padding:18px 20px}
+.gloss b{
+  display:block; font-family:var(--mono); font-size:13px; font-weight:600;
+  color:var(--teal); margin-bottom:4px;
+}
+.gloss span{font-size:14.5px; color:var(--muted)}
+
+/* ---------- questions ---------- */
+.qa{margin-top:28px; max-width:80ch}
+.qa details{
+  border-top:1px solid var(--rule); padding:0;
+}
+.qa details:last-of-type{border-bottom:1px solid var(--rule)}
+.qa summary{
+  cursor:pointer; list-style:none; padding:16px 30px 16px 0; position:relative;
+  font-family:var(--mono); font-size:15px; color:var(--ink);
+}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::after{
+  content:"+"; position:absolute; right:6px; top:14px;
+  color:var(--teal); font-family:var(--mono); font-size:18px;
+}
+.qa details[open] summary::after{content:"−"}
+.qa summary:hover{color:var(--teal)}
+.qa .ans{padding:0 0 18px; color:var(--muted); font-size:15.5px; max-width:72ch}
+.qa .ans p:last-child{margin-bottom:0}
+
+/* ---------- contact ---------- */
+.contacts{
+  display:grid; gap:1px; background:var(--rule); margin-top:32px;
+  border:1px solid var(--rule); border-radius:6px; overflow:hidden;
+}
+@media (min-width:700px){ .contacts{grid-template-columns:repeat(3,1fr)} }
+.contacts div{background:var(--panel); padding:20px}
+.contacts .lbl{
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--faint); margin-bottom:8px;
+}
+.contacts a{font-family:var(--mono); font-size:14px; word-break:break-word}
+.contacts p{font-size:13.5px; color:var(--faint); margin:6px 0 0}
+
+/* ---------- footer ---------- */
+.foot{
+  border-top:1px solid var(--rule); padding-block:34px;
+  font-family:var(--mono); font-size:12px; color:var(--faint);
+}
+.foot .row{display:flex; flex-wrap:wrap; gap:16px 26px; align-items:center}
+.foot a{color:var(--muted)}
+.foot a:hover{color:var(--teal)}
+.foot .fine{margin:18px 0 0; max-width:80ch; line-height:1.7}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+
+<body>
+
+<a class="skip" href="#start">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="/">RDS <em>BRIDGE</em></a>
+    <span class="status">Guide</span>
+    <nav class="nav">
+      <a class="opt" href="/">Home</a>
+      <a class="opt here" href="#start">Guide</a>
+      <a class="opt" href="#choose">Which mode</a>
+      <a class="opt" href="#problems">Problems</a>
+      <a href="#help">Help</a>
+      <a href="https://github.com/m0euk/RDS-Bridge">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero wrap" id="start">
+    <p class="eyebrow">Guide · Start here</p>
+    <h1><span class="mark">Getting <em>started</em></span></h1>
+    <p class="lede">
+      Everything you need to go from &ldquo;I&rsquo;ve downloaded a file&rdquo; to a station name on the
+      screen. No jargon, no assumptions about what you already know, and a picture of every screen you
+      should be looking at. If you only read one thing, read
+      <a href="#choose">which mode is mine</a> &mdash; almost every problem starts with the wrong one.
+    </p>
+
+    <div class="cta">
+      <a class="btn btn--primary" href="https://github.com/m0euk/RDS-Bridge/releases/latest">Download the latest release</a>
+      <a class="btn btn--ghost" href="/">What RDS Bridge does</a>
+    </div>
+
+    <div class="toc">
+      <p>On this page</p>
+      <ol>
+        <li><a href="#what">What it is, and who it&rsquo;s for</a></li>
+        <li><a href="#choose">Which mode is mine?</a></li>
+        <li><a href="#install">Get the file and open it</a></li>
+        <li><a href="#sdrconnect">SDRConnect, step by step</a></li>
+        <li><a href="#iqfile">IQ File, step by step</a></li>
+        <li><a href="#mpx">MPX Stream, step by step</a></li>
+        <li><a href="#network">Network SDR, step by step</a></li>
+        <li><a href="#screen">Reading the screen</a></li>
+        <li><a href="#scan">Scanning the band</a></li>
+        <li><a href="#map">Mapping a recording</a></li>
+        <li><a href="#log">The DX log</a></li>
+        <li><a href="#settings">Settings worth touching</a></li>
+        <li><a href="#problems">If something isn&rsquo;t working</a></li>
+        <li><a href="#help">Getting help</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= WHAT IT IS ================= -->
+  <section class="section wrap" id="what">
+    <p class="eyebrow">01 · The short version</p>
+    <h2>What it is, and who it&rsquo;s for</h2>
+    <p class="lede">
+      RDS Bridge reads the hidden data that FM stations broadcast alongside their audio &mdash; the
+      station name, the identity code, the scrolling text &mdash; and shows it to you as it arrives.
+      It is one file that runs in your browser. There is nothing to install.
+    </p>
+
+    <h3>Who wants this</h3>
+    <ul class="notes">
+      <li><b>FM DXers.</b> The main audience. When a distant station fades up for eight seconds, Bridge is
+        trying to pull an identity out of those eight seconds &mdash; and to tell you honestly how much of
+        it to believe.</li>
+      <li><b>Anyone with a band recording.</b> Load an IQ recording and work it at leisure, as many times as
+        you like, with the settings you wish you&rsquo;d used at the time.</li>
+      <li><b>People who want a second opinion.</b> If your SDR software already decodes RDS, Bridge shows its
+        decode next to yours so you can compare them on the same signal.</li>
+      <li><b>Anyone curious about what&rsquo;s riding on their local FM band.</b> No radio expertise needed
+        beyond getting a signal into it.</li>
+    </ul>
+
+    <h3>Who probably doesn&rsquo;t</h3>
+    <ul class="notes">
+      <li><b>If you want to listen to the radio,</b> use your SDR software. Bridge decodes; audio is there to
+        confirm what you&rsquo;re looking at, not as the point.</li>
+      <li><b>If you want DAB, AM data or HD Radio.</b> Bridge is FM RDS and RBDS only.</li>
+      <li><b>If you have no SDR at all.</b> Bridge is a decoder, not a receiver. It needs a signal from
+        somewhere.</li>
+    </ul>
+
+    <h4>What you need before you start</h4>
+    <ul class="notes">
+      <li><b>A Chromium browser</b> &mdash; Chrome, Edge or Brave. <b>Firefox and Safari will not work</b>,
+        and this is the single most common cause of &ldquo;it just doesn&rsquo;t do anything&rdquo;. If
+        you&rsquo;re on a Mac, Safari is the default browser, so check.</li>
+      <li><b>A signal source</b> &mdash; an SDRplay receiver, a recording, another SDR application, or a
+        radio on your network. Section&nbsp;02 works out which you have.</li>
+      <li><b>Nothing else.</b> No account, no installer, no server. Nothing you do in Bridge leaves your
+        machine.</li>
+    </ul>
+  </section>
+
+  <!-- ================= WHICH MODE ================= -->
+  <section class="section wrap" id="choose">
+    <p class="eyebrow">02 · The important bit</p>
+    <h2>Which mode is mine?</h2>
+    <p class="lede">
+      Bridge has four ways of getting a signal, shown as tabs down the left of the window. Everything to
+      the right of them behaves identically. Find the row below that describes your kit, then jump to
+      that walkthrough.
+    </p>
+
+    <div class="pick">
+      <div>
+        <p class="have">I have an <b>SDRplay receiver</b> (RSPdx, RSPdxR2, RSP1A, RSPduo&hellip;) plugged
+          into this computer, and I run <b>SDRConnect</b>.</p>
+        <p class="go"><span class="tab">SDRConnect</span>
+          <a href="#sdrconnect">Go to the walkthrough &rarr;</a>
+          <span>Nothing extra to download.</span></p>
+      </div>
+      <div>
+        <p class="have">I have a <b>recording of the band</b> &mdash; an IQ file made by SDRConnect, SDR
+          Console, SDRuno or similar &mdash; and I want to work it now.</p>
+        <p class="go"><span class="tab">IQ File</span>
+          <a href="#iqfile">Go to the walkthrough &rarr;</a>
+          <span>Nothing extra to download.</span></p>
+      </div>
+      <div>
+        <p class="have">I have <b>some other SDR</b> and I use <b>SDR Console, SDR++, SDRuno</b> or
+          similar on this computer. My radio isn&rsquo;t an SDRplay, or I just prefer my own software.</p>
+        <p class="go"><span class="tab">MPX Stream</span>
+          <a href="#mpx">Go to the walkthrough &rarr;</a>
+          <span>Needs a virtual audio cable.</span></p>
+      </div>
+      <div>
+        <p class="have">My radio is <b>somewhere else on my network</b> &mdash; an RTL-SDR in the loft
+          running <b>rtl_tcp</b>, or an Airspy behind a <b>SpyServer</b>.</p>
+        <p class="go"><span class="tab">Network SDR</span>
+          <a href="#network">Go to the walkthrough &rarr;</a>
+          <span>Needs the free helper program.</span></p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><b>Still not sure?</b></p>
+      <p>If your radio is plugged into this computer and it&rsquo;s an SDRplay, use <b>SDRConnect</b> mode
+        &mdash; it&rsquo;s the least work and gives you the most (tuning from the page, the waterfall, the
+        band scan, antenna switching). If your radio is plugged into this computer and it isn&rsquo;t an
+        SDRplay, use <b>MPX Stream</b>. Everything else is a special case.</p>
+    </div>
+  </section>
+
+  <!-- ================= INSTALL ================= -->
+  <section class="section wrap" id="install">
+    <p class="eyebrow">03 · Common to every mode</p>
+    <h2>Get the file and open it</h2>
+    <p class="lede">
+      This part is the same whichever mode you end up in, and it takes about a minute.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Download the file</b>
+        <p>Open the
+          <a href="https://github.com/m0euk/RDS-Bridge/releases/latest">latest release page</a>. Under
+          <span class="ui">Assets</span> you&rsquo;ll find a list of files. You want the one called
+          <span class="path">index.html</span>. Click it and save it somewhere you&rsquo;ll find again
+          &mdash; your Desktop is fine.</p>
+        <p>Ignore the other files for now. The ones starting <span class="path">rds-bridge-helper-</span>
+          are only needed for two of the four modes, and the walkthroughs will tell you if yours is one
+          of them.</p>
+        <figure class="shot shot--panel" style="max-width:700px">
+            <a href="/assets/guide/release-assets-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/release-assets-2400.webp"
+               width="943" height="537" loading="lazy"
+               alt="The Assets list on a GitHub release page, with index.html at the top alongside the helper binaries, SHA256SUMS.txt and the third-party notices."></a>
+            <figcaption>The release page. <span style="color:var(--muted)">index.html is the whole application.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Double-click it</b>
+        <p>It opens in your browser and it is already running. That&rsquo;s the install &mdash; there
+          isn&rsquo;t one. The address bar will show something starting <span class="path">file://</span>,
+          which is correct and expected.</p>
+        <p><b>If it opens in Firefox or Safari, close it.</b> Right-click the file and choose
+          <span class="ui">Open with</span> &rarr; Chrome, Edge or Brave. Bridge will tell you if
+          you&rsquo;re in an unsupported browser, but it can&rsquo;t work round it.</p>
+      </li>
+      <li>
+        <b>Have a look round before connecting anything</b>
+        <p>The tabs down the left are your four sources. The panels on the right are the read-outs, and
+          they&rsquo;ll be empty. Top right you&rsquo;ll find <span class="ui">help</span> (the full
+          in-app reference, which goes deeper than this page) and
+          <span class="ui">self&#8209;check</span> &mdash; remember that one, it&rsquo;s the first thing
+          to press if anything goes wrong later.</p>
+        <figure class="shot">
+            <a href="/assets/guide/first-open-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/first-open-2400.webp"
+     srcset="/assets/guide/first-open-1200.webp 1200w, /assets/guide/first-open-2400.webp 2400w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="2400" height="1612" loading="lazy"
+               alt="RDS Bridge open in a browser with nothing connected: the four connection tabs — SDRConnect, IQ File, MPX Stream and Network SDR — at the top left, empty programme service, radiotext and PI stability panels, and the help and self-check buttons in the top right."></a>
+            <figcaption>First open, before anything is connected.</figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Keep it handy</b>
+        <p>Bookmark the local file, or leave it on the Desktop. To update later, download the new
+          <span class="path">index.html</span> from the release page and replace the old one. Your
+          settings live in the browser, not in the file, so they survive the swap.</p>
+      </li>
+    </ol>
+
+    <div class="callout">
+      <p><b>Why is it one file?</b></p>
+      <p>Because that removes every step where something can go wrong on your machine and not on mine.
+        There is no installer to be blocked, no dependency to be missing and no version of anything else
+        to be wrong. It also means nothing is uploaded anywhere &mdash; the decoding happens in your
+        browser, on your computer.</p>
+    </div>
+  </section>
+
+  <!-- ================= SDRCONNECT ================= -->
+  <section class="section wrap" id="sdrconnect">
+    <p class="eyebrow">04 · Walkthrough</p>
+    <h2>SDRConnect, step by step</h2>
+    <p class="lede">
+      For an SDRplay receiver plugged into this computer. This is the fullest mode: Bridge tunes the
+      radio for you, paints the waterfall, switches antennas and can scan the whole band on its own.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Start SDRConnect and get a device running</b>
+        <p>You need <b>SDRConnect 1.0.6 or later</b> &mdash; earlier versions have no way for Bridge to
+          talk to them. Any SDRplay model works except the original RSP1.</p>
+        <p>Start SDRConnect, select your radio, and press play so it is actually receiving. If SDRConnect
+          isn&rsquo;t running and started, Bridge has nothing to connect to.</p>
+      </li>
+      <li>
+        <b>Turn on SDRConnect&rsquo;s WebSocket API</b>
+        <p>This is the one setting people miss. Open SDRConnect&rsquo;s <span class="ui">Preferences</span>
+          and turn on <span class="ui">WebSocket Server</span>. It listens on port
+          <span class="path">5454</span>, which is the address Bridge already has filled in. You only
+          ever do this once.</p>
+        <figure class="shot shot--panel" style="max-width:546px">
+            <a href="/assets/guide/sdrconnect-websocket-setting-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/sdrconnect-websocket-setting-2400.webp"
+               width="546" height="287" loading="lazy"
+               alt="SDRConnect's Preferences panel with the WebSocket Server switch turned on, alongside the update, device discovery, IARU region and RDS standard settings."></a>
+            <figcaption>SDRConnect&rsquo;s Preferences. <span style="color:var(--muted)">WebSocket Server on &mdash; once only.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>In Bridge, choose the SDRConnect tab and press Connect</b>
+        <p>Leave the address as it is unless you know you&rsquo;ve changed something. Press
+          <span class="ui">Connect</span>. Within a second or two the panel should show your radio&rsquo;s
+          model, its sample rate and the antenna ports it offers.</p>
+        <p>If nothing happens, it is almost always one of two things: SDRConnect isn&rsquo;t running with
+          a device started, or the WebSocket API isn&rsquo;t switched on. See
+          <a href="#problems">problems</a>.</p>
+      </li>
+      <li>
+        <b>Press Start</b>
+        <p>The waterfall fills in and the decoder begins. <span class="ui">Connect</span> establishes the
+          link; <span class="ui">Start</span> begins the decoding. You need both.</p>
+        <figure class="shot shot--panel" style="max-width:273px">
+            <a href="/assets/guide/sdrconnect-connected-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/sdrconnect-connected-2400.webp"
+               width="273" height="410" loading="lazy"
+               alt="The SDRConnect connection panel after a successful connection: the WebSocket address, Connect and Disconnect buttons, an RSPdxR2 shown in the device list, an antenna selector set to Antenna A, and the Start and Stop decoder buttons below."></a>
+            <figcaption>Connected and running.</figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Tune to a station you know</b>
+        <p>Click a peak on the waterfall, or type a frequency. Start with a strong local &mdash; you want
+          something that will definitely decode, so you can confirm the whole chain works before you go
+          chasing anything difficult.</p>
+        <p>Within a second or two the station name should appear. That&rsquo;s a working setup. Now go to
+          <a href="#screen">reading the screen</a>.</p>
+      </li>
+    </ol>
+
+    <div class="callout">
+      <p><b>Antenna ports</b></p>
+      <p>If your model has more than one antenna input, the dropdown in the source panel switches it from
+        the page, so you don&rsquo;t need to go back to SDRConnect to try the other one.</p>
+    </div>
+  </section>
+
+  <!-- ================= IQ FILE ================= -->
+  <section class="section wrap" id="iqfile">
+    <p class="eyebrow">05 · Walkthrough</p>
+    <h2>IQ File, step by step</h2>
+    <p class="lede">
+      For working a recording after the event. Nothing to download, nothing to configure &mdash; if you
+      have a file, this mode works in about thirty seconds.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Choose the IQ File tab and pick your recording</b>
+        <p>Bridge reads the common recording formats produced by SDR software, and it reads them straight
+          off your disk &mdash; nothing is copied, converted or uploaded, and a very large file is fine.</p>
+        <p>If your recording came with a separate small file alongside it describing the frequency and
+          sample rate, keep the two together; Bridge will use it to set itself up correctly.</p>
+        <figure class="shot shot--panel" style="max-width:264px">
+            <a href="/assets/guide/iqfile-panel-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/iqfile-panel-2400.webp"
+               width="264" height="590" loading="lazy"
+               alt="The IQ File panel with a recording loaded: the file name, a 9000 kHz sample rate, a length of 473 minutes, a centre frequency of 91.3 MHz and a start time, above pause and stop controls, a seek bar, skip buttons, loop start and end controls, and a button to open the Map view."></a>
+            <figcaption>The IQ File panel with a recording loaded. <span style="color:var(--muted)">Length, sample rate, centre frequency and start time are read from the file.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Check the centre frequency and sample rate look right</b>
+        <p>These are read from the recording where possible. If they look wrong &mdash; a centre frequency
+          nowhere near the FM band, for instance &mdash; correct them here, because everything downstream
+          depends on them. A recording decoded with the wrong centre frequency will log real stations on
+          the wrong frequencies.</p>
+      </li>
+      <li>
+        <b>Press play</b>
+        <p>It behaves like a live radio: tune within the recording, watch the waterfall, decode. You can
+          replay the same moment as many times as you like with different settings, which is the whole
+          point &mdash; a live signal never gives you a second go.</p>
+        <figure class="shot">
+            <a href="/assets/guide/iqfile-playing-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/iqfile-playing-2400.webp"
+     srcset="/assets/guide/iqfile-playing-1200.webp 1200w, /assets/guide/iqfile-playing-2400.webp 2105w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="2105" height="876" loading="lazy"
+               alt="RDS Bridge decoding BBC R3 on 90.700 MHz from an IQ recording: the programme service name, PI code 0xC203, radiotext, an alternative-frequency list, an RF waterfall across the FM band, the MPX composite spectrum and the 57 kHz confidence read-out."></a>
+            <figcaption>A recording decoding, half an hour into the file. <span style="color:var(--muted)">Tap to enlarge.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Or map it first</b>
+        <p>Rather than hunting through a long recording, build a <a href="#map">band map</a> and see the
+          whole thing as a picture &mdash; every channel, the entire length of the file, in seconds. Then
+          click straight to the interesting bits.</p>
+      </li>
+    </ol>
+
+    <div class="callout callout--warn">
+      <p><b>A note on very large recordings</b></p>
+      <p>Bridge decodes as fast as your computer can process the file. If your machine can&rsquo;t keep up
+        with a wide, fast recording in real time, the <b>audio</b> will stutter &mdash; but the
+        <b>decoding is unaffected</b>, and Bridge tells you when it&rsquo;s running below real time.
+        Stuttering audio is not a sign that something is broken.</p>
+    </div>
+  </section>
+
+  <!-- ================= MPX ================= -->
+  <section class="section wrap" id="mpx">
+    <p class="eyebrow">06 · Walkthrough</p>
+    <h2>MPX Stream, step by step</h2>
+    <p class="lede">
+      For a radio that Bridge doesn&rsquo;t talk to directly. Your SDR software demodulates the FM as
+      usual, and passes Bridge the raw composite signal &mdash; the <em>MPX</em> &mdash; through a virtual
+      audio cable. Bridge pulls the RDS out of that.
+    </p>
+
+    <div class="callout callout--warn">
+      <p><b>This one has the most moving parts</b></p>
+      <p>Two programs, an audio cable that isn&rsquo;t a real cable, and a sample rate that has to match.
+        Follow the steps in order and it&rsquo;s reliable; skip one and you&rsquo;ll get silence with no
+        obvious reason. If you have an SDRplay, <a href="#sdrconnect">SDRConnect mode</a> is much less
+        work.</p>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <b>Install a virtual audio cable</b>
+        <p>This is a small free utility that makes your computer think it has an extra sound card, so one
+          program&rsquo;s output becomes another program&rsquo;s input. On Windows, VB-Audio&rsquo;s
+          <b>VB-CABLE</b> is the usual choice; on a Mac, <b>BlackHole</b>. Install it and restart your SDR
+          software so it sees the new device.</p>
+      </li>
+      <li>
+        <b>Set your SDR software to output composite / MPX</b>
+        <p>What you&rsquo;re after is the <em>undemodulated composite</em> &mdash; not normal audio. In SDR
+          Console it lives under <span class="ui">Broadcast FM Options</span> &rarr;
+          <span class="ui">MPX Forward</span>: set <b>Output device</b> to the virtual cable you just
+          installed and tick <span class="ui">Enable</span>. There is no rate to choose &mdash; it
+          forwards at 192&nbsp;kHz automatically, and the line underneath confirms it. SDR++ has a
+          composite output of its own; wherever you can pick a rate, take the highest offered, because
+          the RDS sits at 57&nbsp;kHz and doesn&rsquo;t survive a lower one.</p>
+        <figure class="shot shot--panel" style="max-width:820px">
+            <a href="/assets/guide/mpx-sdrconsole-output-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/mpx-sdrconsole-output-2400.webp"
+     srcset="/assets/guide/mpx-sdrconsole-output-1200.webp 1200w, /assets/guide/mpx-sdrconsole-output-2400.webp 1635w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="1635" height="783" loading="lazy"
+               alt="SDR Console's Broadcast FM Options window on the MPX Forward tab: an output device dropdown set to Line 1 of a virtual audio cable, a level slider, an Enable tickbox, and a confirmation line reading MPX started at a rate of 192000, one channel, 32 bits, format is supported."></a>
+            <figcaption>SDR Console&rsquo;s <b>Broadcast FM Options &rarr; MPX Forward</b>. <span style="color:var(--muted)">Output device set to the virtual cable, Enable ticked, and it confirms the format underneath.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>In Bridge, choose the MPX tab and select the cable as the input</b>
+        <p>Your browser will ask permission to use the microphone. That&rsquo;s how a browser sees any
+          audio input, including a virtual cable &mdash; you must allow it or nothing arrives. Then pick
+          the virtual cable from the device list, <b>not</b> your real microphone.</p>
+        <p>The MPX spectrum display should come alive, with an unmistakable spike at 19&nbsp;kHz &mdash; the
+          stereo pilot. <b>That spike is the test</b>: if it&rsquo;s there, the audio path is right.</p>
+        <p>Don&rsquo;t go looking for an equally obvious one at 57&nbsp;kHz. The RDS subcarrier is a low,
+          broad bump even on a strong local, and it is easy to convince yourself it&rsquo;s missing when
+          the decode is working perfectly. The read-out that actually tells you is
+          <span class="ui">57K confidence</span> underneath, and the station name appearing.</p>
+        <figure class="shot">
+            <a href="/assets/guide/mpx-spectrum-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/mpx-spectrum-2400.webp"
+     srcset="/assets/guide/mpx-spectrum-1200.webp 1200w, /assets/guide/mpx-spectrum-2400.webp 2400w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="2400" height="904" loading="lazy"
+               alt="RDS Bridge in MPX Stream mode decoding BBC R2 on 88.500 MHz: the audio input set to a virtual cable, the frequency helper linked and reporting 88.500 MHz, the programme service name, PI code 0xC202, radiotext and alternative frequencies, and the composite spectrum below showing a tall stereo pilot spike at 19 kHz."></a>
+            <figcaption>MPX mode working: BBC R2 decoded from the composite. <span style="color:var(--muted)">The tall spike at 19 kHz is the stereo pilot. Tap to enlarge.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Optional: let the helper fill in the frequency</b>
+        <p>Bridge has no way of knowing what your SDR software is tuned to, so catches will log without a
+          real frequency. The free <b>helper</b> program fixes that: it reads the tuned frequency from
+          your SDR software and passes it to Bridge, so the DX log comes out right. With SDR Console it
+          can also <em>tune</em> the radio, which is what makes the <a href="#scan">band scan</a> work in
+          this mode.</p>
+        <p>Download it from the same
+          <a href="https://github.com/m0euk/RDS-Bridge/releases/latest">release page</a> &mdash; the file
+          for your system, e.g. <span class="path">rds-bridge-helper-&hellip;-windows-amd64.exe</span> on
+          Windows. With SDR Console there is one extra piece: it shares its frequency over a serial CAT
+          port, and two Windows programs can&rsquo;t share one port, so you install a free virtual COM
+          pair (com0com) and give each program one end. It&rsquo;s a five-minute job you do once. Full
+          setup is in the
+          <a href="https://github.com/m0euk/RDS-Bridge/blob/main/helper/README.md">helper&rsquo;s own
+          guide</a>. See also <a href="#helper-notes">the helper notes</a> below.</p>
+        <figure class="shot shot--panel" style="max-width:620px">
+          <a href="/assets/guide/helper-frequency-2400.webp" aria-label="Open the screenshot full size"><img
+             src="/assets/guide/helper-frequency-2400.webp"
+     srcset="/assets/guide/helper-frequency-1200.webp 1200w, /assets/guide/helper-frequency-2400.webp 1235w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+             width="1235" height="1305" loading="lazy"
+             alt="The RDS Bridge Helper page showing a green connected status and a tuned frequency of 88.400 MHz read from SDR Console over a serial CAT port, the WebSocket address to paste into RDS Bridge with a Copy button, and dropdowns for the source, COM port and speed above an Apply button."></a>
+          <figcaption>The helper connected to SDR Console over CAT, reporting the tuned frequency. <span style="color:var(--muted)">Paste the address it shows into Bridge&rsquo;s Frequency Helper row.</span></figcaption>
+        </figure>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ================= NETWORK ================= -->
+  <section class="section wrap" id="network">
+    <p class="eyebrow">07 · Walkthrough</p>
+    <h2>Network SDR, step by step</h2>
+    <p class="lede">
+      For a radio that isn&rsquo;t attached to the computer you&rsquo;re sitting at &mdash; an RTL-SDR in
+      the loft running rtl_tcp, or an Airspy behind a SpyServer. A small helper program collects the
+      stream and hands it to Bridge.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Get your radio serving on the network first</b>
+        <p>Whatever you normally do to make that radio available &mdash; run <b>rtl_tcp</b> on the
+          Raspberry Pi, start <b>SpyServer</b> on the machine with the Airspy. Note its address and port.
+          If you can already connect to it with other software, you&rsquo;re ready.</p>
+      </li>
+      <li>
+        <b>Download the helper</b>
+        <p>From the same
+          <a href="https://github.com/m0euk/RDS-Bridge/releases/latest">release page</a> as
+          <span class="path">index.html</span>, take the file matching your computer:</p>
+        <ul class="notes">
+          <li><b>Windows</b> &mdash; <span class="path">rds-bridge-helper-&hellip;-windows-amd64.exe</span></li>
+          <li><b>Mac</b> &mdash; <span class="path">RDS-Bridge-Helper-&hellip;-macos-app.zip</span> (works
+            on both Apple silicon and Intel)</li>
+          <li><b>Linux</b> &mdash; <span class="path">rds-bridge-helper-&hellip;-linux-amd64</span></li>
+        </ul>
+        <p>It&rsquo;s about 5&nbsp;MB and there is nothing to install &mdash; it&rsquo;s a single program
+          you run.</p>
+      </li>
+      <li>
+        <b>Run it</b>
+        <p>Double-click it. A small black console window appears and stays open &mdash; that&rsquo;s the
+          program running, and closing it stops the helper. A configuration page opens in your browser
+          automatically.</p>
+        <p><b>Windows may block it</b> the first time, and <b>macOS will want convincing</b> the first
+          time. Both are expected for a small program from an individual developer; the
+          <a href="https://github.com/m0euk/RDS-Bridge/blob/main/helper/README.md">helper&rsquo;s guide</a>
+          walks through it, and <a href="#problems">problems</a> below explains what&rsquo;s going on.</p>
+        <figure class="shot shot--panel" style="max-width:610px">
+          <a href="/assets/guide/helper-page-opens-2400.webp" aria-label="Open the screenshot full size"><img
+             src="/assets/guide/helper-page-opens-2400.webp"
+             width="610" height="174" loading="lazy"
+             alt="The status panel at the top of the helper page, showing that it is waiting for the SDR and giving the WebSocket address to connect to from RDS Bridge, with a Copy button."></a>
+          <figcaption>The page opens on a waiting state and shows the address Bridge needs. <span style="color:var(--muted)">The Copy button saves typing it.</span></figcaption>
+        </figure>
+      </li>
+      <li>
+        <b>Tell the helper where your radio is</b>
+        <p>On that configuration page, open the source dropdown and choose
+          <span class="ui">Network SDR &mdash; Airspy / RTL-SDR over SpyServer</span> or
+          <span class="ui">Network SDR &mdash; RTL-SDR over rtl_tcp</span>. Enter the address and port
+          from step 1 &mdash; if the radio is on this same machine the defaults are already right &mdash;
+          and press <span class="ui">Apply</span>. SpyServer is the tested route; rtl_tcp is marked
+          experimental for a reason.</p>
+        <figure class="shot shot--panel" style="max-width:620px">
+          <a href="/assets/guide/helper-network-source-2400.webp" aria-label="Open the screenshot full size"><img
+             src="/assets/guide/helper-network-source-2400.webp"
+             srcset="/assets/guide/helper-network-source-1200.webp 1200w, /assets/guide/helper-network-source-2400.webp 1239w"
+             sizes="(max-width:1320px) 100vw, 620px"
+             width="1239" height="1150" loading="lazy"
+             alt="The RDS Bridge Helper page set up for a networked radio: a green connected status showing a tuned frequency of 100.000 MHz from a SpyServer source, the WebSocket address to paste into RDS Bridge with a Copy button, the source dropdown set to Network SDR over SpyServer, and an address box defaulting to localhost port 5555 above an Apply button."></a>
+          <figcaption>The helper set up for a networked radio. <span style="color:var(--muted)">Leave the address alone if the receiver is on this machine.</span></figcaption>
+        </figure>
+      </li>
+      <li>
+        <b>In Bridge, choose the Network SDR tab and connect</b>
+        <p>Bridge connects to the helper on your own machine, and the helper connects onward to the radio.
+          Tune and decode exactly as in any other mode.</p>
+        <p>With <b>SpyServer</b> you also get the waterfall, because SpyServer sends a wideband view that
+          the helper passes on. <b>rtl_tcp doesn&rsquo;t offer one</b>, so with rtl_tcp you get the decode
+          and no waterfall. That&rsquo;s a limitation of rtl_tcp, not a fault.</p>
+      </li>
+    </ol>
+
+    <div class="callout callout--warn" id="helper-notes">
+      <p><b>Keep the helper and Bridge on the same version</b></p>
+      <p>They are a matched pair. An old helper with a new Bridge doesn&rsquo;t give you a polite error
+        &mdash; it gives you garbled decoding that looks like a reception problem. If you update one,
+        take both from the same release, and suspect this first if a setup that used to work suddenly
+        produces nonsense.</p>
+    </div>
+  </section>
+
+  <!-- ================= READING THE SCREEN ================= -->
+  <section class="section wrap" id="screen">
+    <p class="eyebrow">08 · What am I looking at</p>
+    <h2>Reading the screen</h2>
+    <p class="lede">
+      Once something decodes you get a lot of numbers at once. Here is what each one is for, in the order
+      you&rsquo;ll care about them. Nothing here needs to be understood to use Bridge &mdash; but the
+      numbers are the difference between a catch you can log and a guess.
+    </p>
+
+    <figure class="shot">
+            <a href="/assets/guide/screen-annotated-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/screen-annotated-2400.webp"
+     srcset="/assets/guide/screen-annotated-1200.webp 1200w, /assets/guide/screen-annotated-2400.webp 2400w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="2400" height="1001" loading="lazy"
+               alt="The RDS Bridge interface decoding BBC R3 on 90.700 MHz, with labels marking the programme service name, the PI code, the programme type, the radiotext, the alternative-frequency list, dominance and votes, the error-correction control, the subcarrier signal-to-noise bar and the pilot tone bar."></a>
+            <figcaption>The identification panel, labelled. <span style="color:var(--muted)">Tap to enlarge.</span></figcaption>
+          </figure>
+
+    <div class="gloss">
+      <div><b>PS &mdash; the station name</b><span>The eight-character name the station broadcasts, e.g. <em>BBC R2</em>. What you came for. Some stations scroll advertising through this field rather than sending a fixed name.</span></div>
+      <div><b>PI &mdash; the identity code</b><span>A four-character code unique to the station, e.g. <em>0xC202</em>. It&rsquo;s the real identity: it arrives faster than the name, and it&rsquo;s what a DX claim rests on.</span></div>
+      <div><b>PTY &mdash; programme type</b><span>The station&rsquo;s own description of what it broadcasts, e.g. <em>Serious Classical</em>. Occasionally useful for telling two similar stations apart.</span></div>
+      <div><b>RadioText</b><span>The scrolling line &mdash; usually the current song or programme. It arrives slowly, so on a weak signal you may get a name and code but never any text.</span></div>
+      <div><b>AF &mdash; alternative frequencies</b><span>Other frequencies the same station uses. On a distant catch this is a strong corroborating clue about which network you&rsquo;ve got.</span></div>
+      <div><b>Country</b><span>Shown <em>only</em> once the station actually transmits the code that states it. Bridge will not guess a country from the identity code alone, even though a guess is usually right.</span></div>
+      <div><b>Dominance, votes, rivals</b><span>How consistently the same identity keeps arriving. High dominance over many votes means a real, stable catch. Rivals appearing means the decoder is seeing more than one candidate &mdash; treat with suspicion.</span></div>
+      <div><b>SNR</b><span>How far the signal stands above the noise, in dB. Higher is better. Below roughly 10&nbsp;dB you&rsquo;re into genuine DX territory where decodes come in fragments.</span></div>
+      <div><b>Pilot</b><span>How much of the time the stereo pilot tone was present. A quick health check on the channel &mdash; but see the warning below about what it does <em>not</em> tell you.</span></div>
+      <div><b>Q and FEC</b><span>Decode quality, and how much error correction was needed to get there. Useful for comparing two attempts at the same signal after changing a setting.</span></div>
+      <div><b>Time to ID</b><span>How long it took from tuning to a committed identity. On a fade that lasts eight seconds, this is the number that matters.</span></div>
+      <div><b>The 57&nbsp;kHz constellation</b><span>A live picture of the RDS data itself. A tight, clear pattern means an easy decode; a fuzzy blob means Bridge is working hard.</span></div>
+    </div>
+
+    <div class="callout callout--warn">
+      <p><b>The one trap worth knowing about</b></p>
+      <p>A strong station on an adjacent channel can capture the receiver and deliver <em>its</em> RDS while
+        you appear to be tuned elsewhere &mdash; so you get a real, correct decode logged on the wrong
+        frequency. It&rsquo;s most likely when a big local sits 100&nbsp;kHz away from the channel
+        you&rsquo;re on.</p>
+      <p>None of the quality numbers reliably catches this: a captured neighbour can read better than a
+        genuine weak catch. The defence is to be sceptical of a strong, clean decode on a channel that has
+        a much stronger neighbour, and to check whether that same identity is already logged next door.</p>
+    </div>
+
+    <h4>Views</h4>
+    <p>The view selector changes how much is on screen without changing what Bridge is doing.
+      <b>Compact</b> and <b>Essentials</b> for a glance, <b>Normal</b> for everyday use, <b>Advanced</b>
+      for everything, <b>Pano</b> for watching a whole band on a deep waterfall, and <b>Map</b> for the
+      <a href="#map">band map</a>. If the screen feels overwhelming, drop to Essentials &mdash; nothing is
+      lost, it&rsquo;s just hidden.</p>
+  </section>
+
+  <!-- ================= SCAN ================= -->
+  <section class="section wrap" id="scan">
+    <p class="eyebrow">09 · Hands off</p>
+    <h2>Scanning the band</h2>
+    <p class="lede">
+      Bridge can sweep the band on its own, tune each channel that has something on it, and log everything
+      that decodes. Available in SDRConnect mode, on a networked SDR, and in MPX mode when the helper can
+      tune your radio.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Run a Full band scan first</b>
+        <p>In the <span class="ui">Decoder</span> panel, choose scan mode <b>Full band</b> and press
+          <span class="ui">Scan band</span>. One sweep of the whole band, logging everything it can
+          identify. Do this once when you set up &mdash; it builds your DX log and, more usefully, tells
+          you what your locals are.</p>
+      </li>
+      <li>
+        <b>Mark your locals as skips</b>
+        <p>Tick <span class="ui">skip</span> on the DX-log rows for the strong local stations, or press
+          <span class="ui">&#65291; my catches</span>. The scan will stop wasting time on stations you can
+          hear every day.</p>
+      </li>
+      <li>
+        <b>Leave DX watch running during an opening</b>
+        <p><b>DX watch</b> sweeps continuously, skipping your locals, empty channels and the splatter
+          around strong signals, so it converges on things that are genuinely new. This is the mode to
+          start and walk away from. A station you actually catch is never skipped automatically.</p>
+      </li>
+      <li>
+        <b>Or camp on a watch list</b>
+        <p><b>Watch list</b> loops only the frequencies you specify &mdash; individual channels and ranges,
+          for instance <span class="path">87.5-88.0 104.2</span>. This is the one for the clear channels
+          at the bottom of the band where Sporadic-E shows up first.</p>
+        <figure class="shot shot--panel" style="max-width:272px">
+            <a href="/assets/guide/scan-panel-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/scan-panel-2400.webp"
+               width="272" height="728" loading="lazy"
+               alt="The band scan controls mid-sweep: the Scan band button, a progress line reading 93.4 MHz, scan mode set to Full band, a skip list of local frequencies shown as removable chips, and a watch-list entry field."></a>
+            <figcaption>The scan controls, mid-sweep.</figcaption>
+          </figure>
+      </li>
+    </ol>
+
+    <ul class="notes">
+      <li><b>Set your channel spacing to match your region.</b> <b>Auto</b> is right for most people
+        (100&nbsp;kHz in Europe, 200&nbsp;kHz in North America). Set it manually for grids that differ
+        &mdash; 250&nbsp;kHz for Thailand&rsquo;s quarter-MHz channels, 50&nbsp;kHz for Italy. Get this
+        wrong and the scan steps straight over real stations.</li>
+      <li><b>The scan can&rsquo;t invent a station.</b> It only points the radio and watches; every catch
+        goes through the same decoder and the same confirmation as a manual tune.</li>
+      <li><b>Turn on the verbose scan log</b> if you want to see every channel and its level as it goes.
+        Otherwise you get starts, catches, a progress note every thirty seconds, and the stop.</li>
+    </ul>
+  </section>
+
+  <!-- ================= BAND MAP ================= -->
+  <section class="section wrap" id="map">
+    <p class="eyebrow">10 · IQ recordings only</p>
+    <h2>Mapping a recording</h2>
+    <p class="lede">
+      A band recording contains far more than you heard while it played. The band map turns one into a
+      picture &mdash; time running down the page, channels running across &mdash; so a two-minute opening
+      on 90.7, half an hour in, becomes something you can see instead of something you had to be
+      listening for.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <b>Load your recording in IQ File mode</b>
+        <p>As in the <a href="#iqfile">IQ File walkthrough</a>. The map is IQ-File-only &mdash; it needs
+          the whole recording on disk to sample across, which a live radio can&rsquo;t offer.</p>
+      </li>
+      <li>
+        <b>Switch the view selector to <span class="ui">map</span> and press <span class="ui">build</span></b>
+        <p>It samples the file rather than reading it end to end, so even a very large capture maps in
+          seconds rather than in the time it would take to play through.</p>
+        <figure class="shot">
+            <a href="/assets/guide/bandmap-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/bandmap-2400.webp"
+     srcset="/assets/guide/bandmap-1200.webp 1200w, /assets/guide/bandmap-2400.webp 1524w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="1524" height="1195" loading="lazy"
+               alt="A band map built from an IQ recording: frequency running across the top from 86 to 95 MHz, time running down the left from 22:56 to 23:48 UTC, and columns of bright cells showing which channels carried a signal at each moment, with blue rings marking catches already in the DX log."></a>
+            <figcaption>A mapped recording &mdash; two channels already ringed as catches. <span style="color:var(--muted)">Each cell shows how far that channel stood above its own noise floor at that moment. Tap to enlarge.</span></figcaption>
+          </figure>
+      </li>
+      <li>
+        <b>Read it</b>
+        <p>Bright means that channel stood well above <em>its own</em> noise floor in that slice of time.
+          It is a presence map, not a signal-strength meter &mdash; a fading band and a strong one both
+          read sensibly, and the numbers don&rsquo;t compare between recordings.</p>
+        <p>Your existing catches from that recording are drawn on as rings. <b>A bright column with no
+          ring on it is something you haven&rsquo;t identified yet</b> &mdash; that&rsquo;s the map earning
+          its keep.</p>
+      </li>
+      <li>
+        <b>Click a cell to go there</b>
+        <p>The recording seeks to that moment, tunes that channel and starts playing with audio armed. A
+          playhead marks where you are; it follows playback and gets out of your way as soon as you
+          scroll off to read the map.</p>
+      </li>
+      <li>
+        <b>Loop a marginal signal</b>
+        <p>Set <span class="ui">loop start</span> and <span class="ui">loop end</span> around the
+          interesting stretch and press <span class="ui">play loop</span> to run it repeatedly. The
+          decoder restarts cleanly on every pass, deliberately &mdash; replaying identical samples must
+          not be allowed to inflate the confidence in an identity that was never really there.</p>
+      </li>
+    </ol>
+
+    <ul class="notes">
+      <li><b>Row length</b> is five seconds by default and can be set from five seconds to five minutes. A
+        recording long enough to overrun the canvas steps it up automatically.</li>
+      <li><b>The edges of the capture are marked, not hidden.</b> Channels beyond the two faint lines are
+        outside the recording&rsquo;s flat region &mdash; they&rsquo;re real and worth checking, they just
+        read low.</li>
+      <li><b>Catches from elsewhere aren&rsquo;t drawn.</b> A catch made live, or from a different
+        recording, has no position in this file, so it&rsquo;s left off rather than placed at a guess.</li>
+    </ul>
+  </section>
+
+  <!-- ================= DX LOG ================= -->
+  <section class="section wrap" id="log">
+    <p class="eyebrow">11 · Keeping the results</p>
+    <h2>The DX log</h2>
+    <p class="lede">
+      Every station Bridge identifies goes into the log, with the evidence attached.
+    </p>
+    <ul class="notes">
+      <li><b>Each row records</b> frequency, PI, station name, time, signal level, pilot, decode quality,
+        error correction and how long the identification took &mdash; so months later you can still see
+        how solid a catch was.</li>
+      <li><b>Repeats are counted, not duplicated.</b> The same station caught four times shows as one row
+        with a count.</li>
+      <li><b>Export to CSV</b> for your own records, or to import into whatever you log with.</li>
+      <li><b>The skip column feeds the <a href="#scan">band scan</a></b> &mdash; ticking your locals here
+        is what makes DX watch worth leaving running.</li>
+    </ul>
+    <figure class="shot">
+            <a href="/assets/guide/dx-log-2400.webp" aria-label="Open the screenshot full size"><img
+               src="/assets/guide/dx-log-2400.webp"
+     srcset="/assets/guide/dx-log-1200.webp 1200w, /assets/guide/dx-log-2400.webp 2382w"
+     sizes="(max-width:1320px) 100vw, 1240px"
+               width="2382" height="944" loading="lazy"
+               alt="The DX log listing catches by frequency, PI code and station name with the time and a repeat count, each row carrying signal level, pilot percentage, decode quality, error correction and time to identification, and a skip checkbox at the right."></a>
+            <figcaption>The DX log, with the export control.</figcaption>
+          </figure>
+  </section>
+
+  <!-- ================= SETTINGS ================= -->
+  <section class="section wrap" id="settings">
+    <p class="eyebrow">12 · Knobs</p>
+    <h2>Settings worth touching</h2>
+    <p class="lede">
+      Bridge works out of the box. These are the few controls that genuinely repay attention &mdash; and
+      the honest note that most of the rest can be left alone.
+    </p>
+
+    <h4>Worth changing</h4>
+    <ul class="notes">
+      <li><b>Channel spacing.</b> Match it to your region, or the tuning steps and the band scan will
+        march straight past real stations. Auto is right for most people.</li>
+      <li><b>Channel bandwidth.</b> Wider gathers more of the signal; narrower rejects the neighbours.
+        If a strong local sits next to the channel you&rsquo;re chasing, narrowing this is the fix for
+        the neighbour-capture trap described <a href="#screen">above</a>.</li>
+      <li><b>Error correction depth.</b> More correction pulls identities out of worse signals. It is
+        adjustable rather than fixed because the right answer depends on what you&rsquo;re doing, and
+        because more correction always means more chances to be wrong.</li>
+      <li><b>Antenna port,</b> if your radio has more than one.</li>
+    </ul>
+
+    <h4>Leave alone unless you have a reason</h4>
+    <p>The rest of the decoder settings have defaults chosen by measurement against real recordings. If
+      you change several at once and things get worse, you won&rsquo;t know which one did it &mdash;
+      change one, and compare the same signal twice.</p>
+
+    <div class="callout">
+      <p><b>How to test a setting properly</b></p>
+      <p>Use a recording. A live signal is fading while you&rsquo;re experimenting on it, so you can never
+        tell whether the change or the propagation made the difference. In IQ File mode the same signal
+        plays identically every time, which is the only way to get a straight answer.</p>
+    </div>
+  </section>
+
+  <!-- ================= PROBLEMS ================= -->
+  <section class="section wrap" id="problems">
+    <p class="eyebrow">13 · When it doesn&rsquo;t work</p>
+    <h2>If something isn&rsquo;t working</h2>
+
+    <div class="callout">
+      <p><b>Press self-check first</b></p>
+      <p>Top right of the window, next to <span class="ui">help</span>. It takes a few seconds and answers
+        most of what follows without you having to work out which question you&rsquo;re asking: it names
+        the browser you&rsquo;re <em>actually</em> using, confirms your copy of the file is complete,
+        proves the decoder works by generating its own test signal and decoding it, and reports what is
+        connected.</p>
+      <p>It writes a plain-English report to your Downloads folder. Nothing is sent anywhere &mdash;
+        it&rsquo;s yours to read, ignore, or email to us. It deliberately contains no file names, folder
+        names, locations or serial numbers, and nothing from your DX log.</p>
+    </div>
+
+    <div class="qa">
+      <details>
+        <summary>Nothing happens at all when I open the file</summary>
+        <div class="ans">
+          <p>You are almost certainly in Firefox or Safari. Bridge needs a Chromium browser &mdash; Chrome,
+            Edge or Brave. On a Mac, Safari is the default, so files open there unless you tell them not
+            to. Right-click the file, choose <span class="ui">Open with</span>, and pick a supported
+            browser.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Connect does nothing / it won&rsquo;t connect to SDRConnect</summary>
+        <div class="ans">
+          <p>Three things, in this order. <b>One:</b> is SDRConnect actually running with a device started
+            and playing? <b>Two:</b> is <span class="ui">WebSocket Server</span> switched on in its Preferences?
+            This is off by default and is the commonest single cause. <b>Three:</b> are you on SDRConnect
+            1.0.6 or later? Earlier versions have no WebSocket server at all.</p>
+        </div>
+      </details>
+      <details>
+        <summary>It connects, but nothing decodes</summary>
+        <div class="ans">
+          <p>Did you press <span class="ui">Start</span> as well as <span class="ui">Connect</span>? They
+            are two separate things &mdash; the first opens the link, the second begins decoding.</p>
+          <p>If you did, tune to the strongest local station you have. If <em>that</em> won&rsquo;t decode,
+            run <span class="ui">self&#8209;check</span>: it will tell you whether the decoder itself is
+            healthy, which separates &ldquo;the software is broken&rdquo; from &ldquo;the signal
+            isn&rsquo;t there&rdquo;.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Windows Defender blocked the helper, or called it a virus</summary>
+        <div class="ans">
+          <p>Expected, and it is a false positive. The helper is a small program from an individual
+            developer, distributed without a commercial code-signing certificate, and Defender treats
+            anything unfamiliar with suspicion &mdash; it is reacting to the absence of a certificate, not
+            to anything in the program.</p>
+          <p>You don&rsquo;t have to take that on trust. Every release includes a
+            <span class="path">SHA256SUMS.txt</span> listing the exact fingerprint of each file; check the
+            file you downloaded against it, and you know you have precisely what was published. The
+            <a href="https://github.com/m0euk/RDS-Bridge/blob/main/helper/README.md">helper&rsquo;s
+            guide</a> shows the one command to do that. The helper is also open source &mdash; the whole
+            program is on GitHub and you can build it yourself.</p>
+          <p>If you would rather not, you don&rsquo;t need the helper for
+            <a href="#sdrconnect">SDRConnect</a> or <a href="#iqfile">IQ File</a> mode at all.</p>
+        </div>
+      </details>
+      <details>
+        <summary>macOS says the helper is damaged, or from an unidentified developer</summary>
+        <div class="ans">
+          <p>Also expected: the Mac build isn&rsquo;t signed with an Apple developer certificate. The
+            <a href="https://github.com/m0euk/RDS-Bridge/blob/main/helper/README.md">helper&rsquo;s
+            guide</a> has the exact steps &mdash; it is a one-time thing, and the same steps you may
+            already have used for other radio tools.</p>
+        </div>
+      </details>
+      <details>
+        <summary>In MPX mode I get silence, or a flat spectrum</summary>
+        <div class="ans">
+          <p>Work backwards. <b>Is the browser allowed to use audio input?</b> It asks once; if you
+            dismissed it, nothing will ever arrive. <b>Have you picked the virtual cable</b> rather than
+            your real microphone? <b>Is your SDR software sending composite/MPX</b> rather than normal
+            demodulated audio? <b>Is the sample rate 192&nbsp;kHz?</b> The RDS sits at 57&nbsp;kHz and
+            simply isn&rsquo;t present at a lower rate.</p>
+          <p>You&rsquo;ve got it right when the MPX spectrum shows a clear spike at 19&nbsp;kHz. Don&rsquo;t
+            judge it by the 57&nbsp;kHz end &mdash; the RDS subcarrier is a low bump there even when the
+            decode is working, so use the <span class="ui">57K confidence</span> read-out instead.</p>
+        </div>
+      </details>
+      <details>
+        <summary>The audio stutters when I play a recording</summary>
+        <div class="ans">
+          <p>That means your computer can&rsquo;t process that recording as fast as real time &mdash; not
+            that anything is broken. <b>The decoding is unaffected</b>; you will still get every
+            identification. Bridge tells you when it&rsquo;s running below real time so you can tell the
+            difference. Wide, high-rate recordings ask a lot of any machine.</p>
+        </div>
+      </details>
+      <details>
+        <summary>A station is logged on the wrong frequency</summary>
+        <div class="ans">
+          <p>Two likely causes. In <b>MPX mode without the helper</b>, Bridge has no way of knowing what
+            your SDR is tuned to. In <b>IQ File mode</b>, check the centre frequency and sample rate are
+            right for that recording &mdash; if they&rsquo;re wrong, everything decodes correctly but lands
+            in the wrong place.</p>
+          <p>Otherwise, you may have caught a strong neighbour rather than the channel you&rsquo;re on
+            &mdash; see <a href="#screen">the trap</a> in section 08.</p>
+        </div>
+      </details>
+      <details>
+        <summary>It was working, and now it decodes nonsense</summary>
+        <div class="ans">
+          <p>If you use the helper, check that it and Bridge came from the same release. A mismatched pair
+            doesn&rsquo;t report an error &mdash; it produces garbage that looks exactly like a reception
+            problem. Update both together.</p>
+        </div>
+      </details>
+      <details>
+        <summary>The band scan skips over stations I know are there</summary>
+        <div class="ans">
+          <p>Check your <b>channel spacing</b> matches your region&rsquo;s grid, and check the frequency
+            isn&rsquo;t on your skip list from an earlier session.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Where did my DX log go?</summary>
+        <div class="ans">
+          <p>It lives in your browser, alongside the file. Clearing your browsing data can remove it, and
+            some browser settings prevent it being saved at all &mdash; <span class="ui">self&#8209;check</span>
+            warns you if yours is one of them. <b>Export to CSV</b> after a good session and it&rsquo;s
+            safe on disk whatever happens.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Is anything of mine being uploaded?</summary>
+        <div class="ans">
+          <p>No. The decoding happens in your browser, on your computer. There is no account, no telemetry
+            and no server. The self-check report saves to your own Downloads folder and is sent nowhere
+            unless you choose to email it.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================= HELP ================= -->
+  <section class="section wrap" id="help">
+    <p class="eyebrow">14 · Still stuck</p>
+    <h2>Getting help</h2>
+    <p class="lede">
+      Ask &mdash; that&rsquo;s what these are for. It is a one-person project, so a little detail up front
+      saves a lot of back-and-forth.
+    </p>
+
+    <div class="callout">
+      <p><b>What to include</b></p>
+      <p>Which of the four modes you&rsquo;re in, what radio and what software, what you expected, and what
+        happened instead. If you can, run <span class="ui">self&#8209;check</span> and attach the report
+        &mdash; it answers most of the questions that would otherwise be the first three replies.</p>
+    </div>
+
+    <div class="contacts">
+      <div>
+        <p class="lbl">Discord</p>
+        <a href="https://discord.gg/dNuqXhVyPt">discord.gg/dNuqXhVyPt</a>
+        <p>The quickest route, and other DXers are there too.</p>
+      </div>
+      <div>
+        <p class="lbl">Email</p>
+        <a href="mailto:info@rdsbridge.com">info@rdsbridge.com</a>
+        <p>For anything you&rsquo;d rather not post publicly.</p>
+      </div>
+      <div>
+        <p class="lbl">GitHub</p>
+        <a href="https://github.com/m0euk/RDS-Bridge">github.com/m0euk/RDS-Bridge</a>
+        <p>Source, full documentation, and the issue tracker.</p>
+      </div>
+    </div>
+
+    <ul class="notes">
+      <li><b>The in-app <span class="ui">help</span></b> goes deeper than this page on every read-out and
+        control, and it&rsquo;s always the version that matches your copy.</li>
+      <li><b>The <a href="https://github.com/m0euk/RDS-Bridge#readme">README</a></b> covers the same ground
+        in more technical terms, plus the release history.</li>
+      <li><b>RDS Bridge is free and MIT-licensed.</b> Use it, modify it, build it into something else.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="row">
+      <span>RDS Bridge &mdash; Graeme, M0EUK</span>
+      <a href="/">rdsbridge.com</a>
+      <a href="https://github.com/m0euk/RDS-Bridge">GitHub</a>
+      <a href="https://github.com/m0euk/RDS-Bridge/releases/latest">Releases</a>
+      <a href="https://discord.gg/dNuqXhVyPt">Discord</a>
+      <a href="mailto:info@rdsbridge.com">info@rdsbridge.com</a>
+    </div>
+    <p class="fine">
+      RDS Bridge is free software under the MIT licence. It runs entirely on your own machine: there is no
+      account, no server and no telemetry. SDRplay, SDRConnect, SDRuno, SDR Console, SDR++, SpyServer,
+      Airspy and Windows are the property of their respective owners and this project is not affiliated
+      with any of them.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
