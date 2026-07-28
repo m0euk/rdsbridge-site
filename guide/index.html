@@ -535,10 +535,10 @@ p{margin:0 0 16px}
           to press if anything goes wrong later.</p>
         <figure class="shot">
             <a href="/assets/guide/first-open-2400.webp" aria-label="Open the screenshot full size"><img
-               src="/assets/guide/first-open-2400.webp"
+               src="/assets/guide/first-open-2400.webp" decoding="async"
      srcset="/assets/guide/first-open-1200.webp 1200w, /assets/guide/first-open-2400.webp 2400w"
      sizes="(max-width:1320px) 100vw, 1240px"
-               width="2400" height="1612" loading="lazy"
+               width="2400" height="1612" fetchpriority="high"
                alt="RDS Bridge open in a browser with nothing connected: the four connection tabs — SDRConnect, IQ File, MPX Stream and Network SDR — at the top left, empty programme service, radiotext and PI stability panels, and the help and self-check buttons in the top right."></a>
             <figcaption>First open, before anything is connected.</figcaption>
           </figure>
@@ -654,11 +654,17 @@ p{margin:0 0 16px}
           </figure>
       </li>
       <li>
-        <b>Check the centre frequency and sample rate look right</b>
-        <p>These are read from the recording where possible. If they look wrong &mdash; a centre frequency
-          nowhere near the FM band, for instance &mdash; correct them here, because everything downstream
-          depends on them. A recording decoded with the wrong centre frequency will log real stations on
-          the wrong frequencies.</p>
+        <b>Check the summary line under the file name</b>
+        <p>Bridge works both of these out for itself. The <b>sample rate</b> comes from the recording. The
+          <b>centre frequency</b> comes from the file name, in the convention SDRuno and SDRConnect use
+          &mdash; a run of digits followed by <span class="path">HZ</span>, as in
+          <span class="path">&hellip;_91300000HZ_&hellip;</span> &mdash; or, for SDR Console recordings,
+          from the parameters it writes inside the file.</p>
+        <p><b>If it says no centre frequency was found, the recording still decodes perfectly.</b> You lose
+          only the ability to work in real MHz: the readout shows a dash, tuning is relative to the middle
+          of the recording, and catches log without a true frequency. There is no box to type the centre
+          into &mdash; if you want it back, rename the file so it carries the frequency in that
+          convention, and load it again.</p>
       </li>
       <li>
         <b>Press play</b>
@@ -864,11 +870,14 @@ p{margin:0 0 16px}
     </ol>
 
     <div class="callout callout--warn" id="helper-notes">
-      <p><b>Keep the helper and Bridge on the same version</b></p>
-      <p>They are a matched pair. An old helper with a new Bridge doesn&rsquo;t give you a polite error
-        &mdash; it gives you garbled decoding that looks like a reception problem. If you update one,
-        take both from the same release, and suspect this first if a setup that used to work suddenly
-        produces nonsense.</p>
+      <p><b>Take the helper and Bridge from the same release</b></p>
+      <p><b>Their version numbers will often differ, and that is normal.</b> The helper is only rebuilt
+        when it changes, so a Bridge release frequently ships with a helper carrying an older number.
+        That pairing is the tested one. What matters is that both came off the <em>same release page</em>,
+        not that the numbers match.</p>
+      <p>Mixing releases is what causes trouble, and it doesn&rsquo;t announce itself: an old helper with
+        a newer Bridge gives you garbled decoding that looks exactly like a reception problem rather than
+        an error message. If a setup that used to work suddenly produces nonsense, suspect this first.</p>
     </div>
   </section>
 
@@ -1211,9 +1220,9 @@ p{margin:0 0 16px}
         <summary>A station is logged on the wrong frequency</summary>
         <div class="ans">
           <p>Two likely causes. In <b>MPX mode without the helper</b>, Bridge has no way of knowing what
-            your SDR is tuned to. In <b>IQ File mode</b>, check the centre frequency and sample rate are
-            right for that recording &mdash; if they&rsquo;re wrong, everything decodes correctly but lands
-            in the wrong place.</p>
+            your SDR is tuned to. In <b>IQ File mode</b>, check that the file name carries the right centre
+            frequency &mdash; Bridge reads it from there, so a renamed or mislabelled recording decodes
+            correctly and lands in the wrong place.</p>
           <p>Otherwise, you may have caught a strong neighbour rather than the channel you&rsquo;re on
             &mdash; see <a href="#screen">the trap</a> in section 08.</p>
         </div>
@@ -1221,9 +1230,11 @@ p{margin:0 0 16px}
       <details>
         <summary>It was working, and now it decodes nonsense</summary>
         <div class="ans">
-          <p>If you use the helper, check that it and Bridge came from the same release. A mismatched pair
-            doesn&rsquo;t report an error &mdash; it produces garbage that looks exactly like a reception
-            problem. Update both together.</p>
+          <p>If you use the helper, check that it and Bridge came off the same release page. Don&rsquo;t go by
+            the version numbers &mdash; the helper is only rebuilt when it changes, so an older number
+            alongside a newer Bridge is normal and correct. A genuinely mismatched pair doesn&rsquo;t report
+            an error; it produces garbage that looks exactly like a reception problem. Re-download both from
+            one release and try again.</p>
         </div>
       </details>
       <details>
