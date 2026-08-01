@@ -71,7 +71,8 @@
 
 <style>
 :root{
-  /* sampled from the application itself */
+  /* Site palette. NOT sampled from the app -- it has drifted, and re-sampling it is a redesign, not a
+     release step. Keep it in step with guide/index.html, which carries its own copy. */
   --base:#0f1316;
   --body:#10161a;
   --panel:#13191e;
@@ -580,8 +581,9 @@ p{margin:0 0 16px}
         <h3>Another go at a marginal signal</h3>
         <p>
           Mark a start and an end and loop that stretch of the recording, with the looped section drawn on
-          the map. Each pass restarts the decoder deliberately, so one realisation of noise can't vote for
-          the same spurious PI on every lap.
+          the map. Each pass starts a fraction of a second later than the last and works through a short list
+          of channel bandwidths, so every lap is a genuinely independent attempt rather than a rerun &mdash; and
+          the station assembles across them, character by character, at the strength of its evidence.
         </p>
         <p class="best"><b>Best for:</b> a station that nearly identified itself and then faded.</p>
       </article>
@@ -662,7 +664,7 @@ p{margin:0 0 16px}
   <section class="section wrap" id="features">
     <p class="eyebrow">On screen</p>
     <h2>What Bridge shows you</h2>
-    <p class="lede">The same read-outs in every mode. Five display densities — Compact, Essentials, Pano, Normal and Advanced — so you can strip it back to the identity, watch a whole band, or open the whole instrument up.</p>
+    <p class="lede">The same read-outs in every mode. Five display densities — Compact, Essentials, Pano, Normal and Advanced — so you can strip it back to the identity, watch a whole band, or open the whole instrument up. Dark or light, whichever you read more comfortably.</p>
 
     <ul class="feats">
       <li><b>Identity</b><span>Programme service, PI, PTY, radiotext, alternative frequencies, TP/TA and clock time.</span></li>
@@ -672,6 +674,7 @@ p{margin:0 0 16px}
       <li><b>Band map</b><span>A whole IQ recording as a frequency-by-time picture, with click-to-play, a playhead and section looping.</span></li>
       <li><b>Self-check</b><span>One button that tests your browser, confirms your copy is complete and unmodified, and proves the decoder works on a synthetic signal — then writes a plain-language report you can read or send on. Nothing is sent automatically.</span></li>
       <li><b>Displays</b><span>RF waterfall, MPX composite spectrum and the 57 kHz constellation, live.</span></li>
+      <li><b>Light or dark</b><span>The interface switches between a dark and a light theme and remembers which you chose. The waterfall, the MPX spectrogram and the band map stay dark in both: those are signal painted through a colour map, and a light colour map is harder to read, not easier. A separate control lifts the dimmest labels further again, in either theme.</span></li>
       <li><b>Pano view</b><span>The identity cards over a full-height RF waterfall with adjustable time-depth — a band-watching layout for spotting openings.</span></li>
       <li><b>Weak-signal knobs</b><span>Error correction depth and channel bandwidth — the two worth trying on a stubborn signal.</span></li>
       <li><b>Channel spacing</b><span>Auto, 50, 100, 200 or 250 kHz raster. 250 kHz reaches the quarter-MHz stations used in Thailand.</span></li>
