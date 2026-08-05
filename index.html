@@ -625,9 +625,9 @@ p{margin:0 0 16px}
         <span class="tab">DX watch</span>
         <h3>Loop the band, chase what's new</h3>
         <p>
-          Sweep the whole band on a loop, skipping your skip-list, your locals, the empty
-          channels and the carriers it has learned are dead — so each pass spends its time on
-          what's changing. A signal you've already caught is never auto-skipped.
+          Sweep the whole band on a loop, skipping your skip-list, your locals and the channels
+          it has measured as empty — so each pass spends its time on what's changing. A channel
+          that shows a pilot is never set aside, and neither is a signal you've already caught.
         </p>
         <p class="best"><b>Best for:</b> leaving it running through an opening to catch stations as they surface.</p>
       </article>
@@ -655,8 +655,8 @@ p{margin:0 0 16px}
 
     <ul class="notes">
       <li><b>A persistent skip-list.</b> Keep the scan off your locals for good — type frequencies in, tick “skip” on a DX-log row, or add every catch at once. It's remembered between sessions.</li>
-      <li><b>It learns as it goes.</b> Channels that turn up empty or carry no RDS get set aside within the session, so each loop is quicker than the last.</li>
-      <li><b>See exactly what it's doing.</b> An optional verbose log shows every channel the scan checks and what it decided — logged, empty, dead carrier or skipped.</li>
+      <li><b>It learns as it goes.</b> Channels the scan measures as empty are set aside for a while, so a loop spends its time on what's changing rather than on empty air. A channel that shows a pilot is never set aside — a carrier that didn't give up RDS this time is exactly the marginal DX you left the scan running for — and every channel comes back up for another look after fifteen minutes, so the list settles at a working size rather than growing.</li>
+      <li><b>See exactly what it's doing.</b> An optional verbose log shows every channel the scan checks and what it decided — logged, empty, held for another look, or skipped.</li>
     </ul>
   </section>
 
