@@ -389,6 +389,7 @@ p{margin:0 0 16px}
         <li><a href="#scan">Scanning the band</a></li>
         <li><a href="#map">Mapping a recording</a></li>
         <li><a href="#log">The DX log</a></li>
+        <li><a href="#record">Recording what you hear</a></li>
         <li><a href="#settings">Settings worth touching</a></li>
         <li><a href="#problems">If something isn&rsquo;t working</a></li>
         <li><a href="#help">Getting help</a></li>
@@ -1086,9 +1087,59 @@ p{margin:0 0 16px}
           </figure>
   </section>
 
+  <!-- ================= RECORDING ================= -->
+  <section class="section wrap" id="record">
+    <p class="eyebrow">12 · Keeping the audio</p>
+    <h2>Recording what you hear</h2>
+    <p class="lede">
+      <b>Record</b> and <b>Stop</b> sit in the left panel. They write what Bridge is producing to a WAV file
+      &mdash; in every mode, and whether or not you are listening.
+    </p>
+    <ul class="notes">
+      <li><b>It works in all four modes.</b> SDRConnect, IQ File, MPX Stream and Network SDR alike. The file
+        is 48 kHz, 16-bit, mono.</li>
+      <li><b>You don&rsquo;t have to hear it.</b> If audio was switched off when you press Record, Bridge
+        turns the stream on quietly and leaves your volume alone, then puts it back at Stop. An unattended
+        overnight session recording in silence is the case this was built for.</li>
+      <li><b>Nothing is re-encoded.</b> Bridge takes the audio before it converts it for your speakers, so
+        the file is what the radio delivered rather than a copy of a copy.</li>
+      <li><b>Recording stops itself at 30 minutes,</b> and <i>saves</i> rather than throwing the file away.
+        The limit is written beside the button so you meet it before it fires. At 48 kHz mono a recording
+        costs about 5.8 MB a minute, so a full-length one is around 173 MB.</li>
+      <li><b>Recording and the band scan refuse each other,</b> in both directions, with a message saying
+        so. Changing source mode during a recording is refused for the same reason: a file that spanned two
+        sources would not be what its header says it is.</li>
+    </ul>
+
+    <h4>Where the files go</h4>
+    <p>By default, wherever your browser puts downloads. Press <b>Choose folder&hellip;</b> once and every
+      recording after that is written straight into that folder with no save dialog &mdash; including one
+      that stops itself at the time limit. The line above the button tells you whether your browser will
+      remember the choice next time you open Bridge; some do, some don&rsquo;t, and it says which you have
+      rather than promising.</p>
+    <p>Chrome will not grant access to every folder &mdash; on test it refused Downloads itself. That is the
+      browser&rsquo;s rule, not Bridge&rsquo;s. If it refuses yours, make a folder of your own and pick that.</p>
+
+    <h4>What the filename tells you</h4>
+    <p>A catch that identified itself looks like
+      <span class="path">rdsbridge_20260812T152346Z_88.500MHz_C202_BBC-R2.wav</span>; one that didn&rsquo;t
+      like <span class="path">rdsbridge_20260812T152346Z_88.500MHz.wav</span>.</p>
+    <p>Date first, so a folder of them sorts into order on its own, and the time is UTC &mdash; a local-time
+      filename stops meaning anything the moment you send the file to someone in another country. The PI code
+      and station name appear <i>only</i> if they actually decoded; nothing is guessed to fill the gap. The
+      frequency is the one you started on.</p>
+
+    <div class="callout">
+      <p><b>A recording is the most useful thing you can send with a bug report</b></p>
+      <p>It is a byte-exact copy of what arrived, so it can be measured rather than described. If you are
+        reporting audio that stutters, drops or repeats, a 60-second recording alongside your activity log
+        answers questions that words can&rsquo;t.</p>
+    </div>
+  </section>
+
   <!-- ================= SETTINGS ================= -->
   <section class="section wrap" id="settings">
-    <p class="eyebrow">12 · Knobs</p>
+    <p class="eyebrow">13 · Knobs</p>
     <h2>Settings worth touching</h2>
     <p class="lede">
       Bridge works out of the box. These are the few controls that genuinely repay attention &mdash; and
@@ -1123,7 +1174,7 @@ p{margin:0 0 16px}
 
   <!-- ================= PROBLEMS ================= -->
   <section class="section wrap" id="problems">
-    <p class="eyebrow">13 · When it doesn&rsquo;t work</p>
+    <p class="eyebrow">14 · When it doesn&rsquo;t work</p>
     <h2>If something isn&rsquo;t working</h2>
 
     <div class="callout">
@@ -1245,6 +1296,18 @@ p{margin:0 0 16px}
         </div>
       </details>
       <details>
+        <summary>Bridge won&rsquo;t save recordings into the folder I picked</summary>
+        <div class="ans">
+          <p>Two different things. If the browser <b>refused the folder outright</b>, that is its own rule
+            rather than Bridge&rsquo;s &mdash; Chrome will not hand out access to every folder, and on test it
+            refused Downloads itself. Make a folder of your own and choose that.</p>
+          <p>If it worked yesterday and asks again today, the browser has let the permission lapse. Press
+            <b>Record</b> and it will ask you to confirm the same folder; that is the only moment it is
+            allowed to ask. Until you do, recordings go to your downloads folder as normal rather than being
+            lost.</p>
+        </div>
+      </details>
+      <details>
         <summary>Where did my DX log go?</summary>
         <div class="ans">
           <p>It lives in your browser, alongside the file. Clearing your browsing data can remove it, and
@@ -1266,7 +1329,7 @@ p{margin:0 0 16px}
 
   <!-- ================= HELP ================= -->
   <section class="section wrap" id="help">
-    <p class="eyebrow">14 · Still stuck</p>
+    <p class="eyebrow">15 · Still stuck</p>
     <h2>Getting help</h2>
     <p class="lede">
       Ask &mdash; that&rsquo;s what these are for. It is a one-person project, so a little detail up front
