@@ -1129,6 +1129,44 @@ p{margin:0 0 16px}
       and station name appear <i>only</i> if they actually decoded; nothing is guessed to fill the gap. The
       frequency is the one you started on.</p>
 
+    <h4>Starting the recording before you pressed Record</h4>
+    <p>Tick <b>Keep the last 30 seconds</b> and Bridge holds the most recent half-minute of audio in
+      memory. Press <b>Record</b> and the file opens with that half-minute already in it. Or press
+      <b>Save Last 30s</b> and it writes just those thirty seconds, without starting a recording at all &mdash;
+      for the catch you noticed a moment too late.</p>
+    <p>It is off until you switch it on, because holding that audio costs about 2.9 MB of memory and we have
+      not measured what maintaining it costs your machine. The switch says so rather than pretending it is
+      free. Retuning throws the held audio away, so a file can never contain two different frequencies
+      spliced together.</p>
+
+    <h4>Recording what a scan catches</h4>
+    <p>Tick <b>Save a clip of every catch during a band scan</b> and each station the scan identifies gets its
+      own WAV, written straight into your chosen folder. Leave a DX watch running overnight and you wake up to
+      the audio of every catch as well as the log lines.</p>
+    <ul class="notes">
+      <li><b>Choose a folder first.</b> The switch stays greyed until you have. A scan runs with nobody
+        touching the page, so there is nothing for a save dialog to open on &mdash; clips can only be written
+        somewhere you have already allowed. If the folder was remembered from last time, your browser is
+        asked to confirm it the moment you press <b>Scan</b>, so it is settled before the first catch rather
+        than after it.</li>
+      <li><b>It keeps listening after the catch.</b> A strong station is identified in about a second, a
+        marginal one takes five &mdash; so a clip that stopped at the catch would give you the shortest
+        recordings of your best stations. Bridge holds the channel for a few seconds more (10 by default,
+        up to 20, or none) and writes the clip after that, which is usually long enough to catch a spoken
+        identification. It costs pass time only on the channels that actually found something.</li>
+      <li><b>One clip per station per scan.</b> The first catch wins; the same station on a later lap is
+        logged as usual and not recorded again. So a night costs you the number of stations you caught, not
+        the number of channels it checked &mdash; at the default hold, about 1.5 MB each.</li>
+      <li><b>The clip is that channel and nothing else.</b> It starts after the retune has settled, so it
+        can never open on the station before it in the sweep.</li>
+      <li><b>Your speakers stay off if they were off,</b> the same as an ordinary recording.</li>
+      <li><b>If the folder becomes unwritable</b> part way through a night, the clips stop, the log says so
+        once, and the scan carries on regardless.</li>
+    </ul>
+    <p>Expect the odd file from the channel <i>next to</i> a very strong local. Bridge tests for that and
+      skips it, but a station splashing over its neighbour is the nature of the FM band rather than a fault,
+      and a few will get through on a long scan.</p>
+
     <div class="callout">
       <p><b>A recording is the most useful thing you can send with a bug report</b></p>
       <p>It is a byte-exact copy of what arrived, so it can be measured rather than described. If you are
