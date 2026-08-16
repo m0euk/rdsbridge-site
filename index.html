@@ -657,6 +657,25 @@ p{margin:0 0 16px}
     </div>
 
     <div class="callout">
+      <p><b>And it can work each of your antennas in turn</b></p>
+      <p>
+        If your SDRplay receiver has more than one antenna port, Bridge will remember what each one needs —
+        its RF gain and its spectrum scale — and put those settings back whenever it switches to it. Tick two
+        or more ports and a scan sweeps each in turn: a looping scan cycles round them, a full band sweep does
+        one pass on every antenna and stops. Every catch is logged against the port that heard it, and clips
+        are written per port, so you can compare the same station on both. Each port keeps its own record of
+        which channels were dead, so a channel written off on one antenna is still checked on the others —
+        that is the whole point, and it means early passes take longer than a single-antenna scan.
+      </p>
+      <p>
+        One thing Bridge can't do: <span class="k">SDRConnect</span>'s interface doesn't let any application
+        read or set the IF gain, so that one is yours to set. Bridge shows you what each port would ideally
+        have and tells you when you've switched to one that wants something different. In practice one IF
+        setting that suits all your ports is the simplest arrangement.
+      </p>
+    </div>
+
+    <div class="callout">
       <p>
         The scan needs a live <span class="k">SDRConnect</span> stream with hardware control,
         because it tunes the radio for you — press <span class="k">Start</span> first. The
@@ -667,7 +686,7 @@ p{margin:0 0 16px}
 
     <ul class="notes">
       <li><b>A persistent skip-list.</b> Keep the scan off your locals for good — type frequencies in, tick “skip” on a DX-log row, or add every catch at once. It's remembered between sessions.</li>
-      <li><b>It learns as it goes.</b> Channels the scan measures as empty are set aside for a while, so a loop spends its time on what's changing rather than on empty air. A channel that shows a pilot is never set aside — a carrier that didn't give up RDS this time is exactly the marginal DX you left the scan running for — and every channel comes back up for another look after fifteen minutes, so the list settles at a working size rather than growing.</li>
+      <li><b>It learns as it goes.</b> Channels the scan measures as empty are set aside for a while, so a loop spends its time on what's changing rather than on empty air. A channel that shows a pilot is never set aside — a carrier that didn't give up RDS this time is exactly the marginal DX you left the scan running for — and every channel comes back up for another look after fifteen minutes, so the list settles at a working size rather than growing. When a scan is working several antennas, each port keeps its own list: a channel that was dead on one antenna is still worth checking on another.</li>
       <li><b>See exactly what it's doing.</b> An optional verbose log shows every channel the scan checks and what it decided — logged, empty, held for another look, or skipped.</li>
     </ul>
   </section>
