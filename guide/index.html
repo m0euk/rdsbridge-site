@@ -387,6 +387,7 @@ p{margin:0 0 16px}
         <li><a href="#network">Network SDR, step by step</a></li>
         <li><a href="#screen">Reading the screen</a></li>
         <li><a href="#scan">Scanning the band</a></li>
+        <li><a href="#antennas">Working several antennas</a></li>
         <li><a href="#map">Mapping a recording</a></li>
         <li><a href="#log">The DX log</a></li>
         <li><a href="#record">Recording what you hear</a></li>
@@ -993,9 +994,84 @@ p{margin:0 0 16px}
     </ul>
   </section>
 
+  <!-- ================= ANTENNAS ================= -->
+  <section class="section wrap" id="antennas">
+    <p class="eyebrow">10 · More than one aerial</p>
+    <h2>Working several antennas</h2>
+    <p class="lede">
+      If your SDRplay receiver has more than one antenna port, Bridge can remember what each one needs and
+      put those settings back whenever you switch to it &mdash; and it can sweep the band on each of them in
+      turn. SDRConnect mode only, and only shown when the radio actually reports more than one port.
+    </p>
+
+    <h3>Telling Bridge about a port</h3>
+    <ol class="steps">
+      <li>Switch to the port you want to set up, using the <span class="k">Antenna</span> box in the
+        <span class="k">Device</span> panel.</li>
+      <li>In <span class="k">SDRConnect</span>, set that antenna up the way you actually want it &mdash; RF
+        gain, and the <span class="k">Base</span> and <span class="k">Ref Level</span> sliders in Display
+        options. Bridge is going to copy whatever the radio reports, so get it right first.</li>
+      <li>In Bridge, click <span class="k">Antenna settings&hellip;</span> underneath the Antenna box.</li>
+      <li>Find the block for the port you&rsquo;re on &mdash; it&rsquo;s marked <em>in use now</em> &mdash;
+        and press <span class="k">Save Settings From Radio</span>.</li>
+      <li>Give it a name if you like: &ldquo;vertical&rdquo;, &ldquo;beam&rdquo;, &ldquo;loft dipole&rdquo;.
+        That name is what you&rsquo;ll see in the log, in the DX log and in clip filenames from then on.</li>
+      <li>Switch to your next port and do the same.</li>
+    </ol>
+    <p>
+      From then on, switching to that port puts its settings back automatically. Bridge reads each one back
+      from the radio afterwards and tells you if anything didn&rsquo;t take, rather than assuming it worked.
+    </p>
+
+    <div class="callout">
+      <p><b>IF Gain and IF AGC are not Bridge&rsquo;s to set</b></p>
+      <p>
+        <span class="k">SDRConnect</span>&rsquo;s interface doesn&rsquo;t let <em>any</em> outside program
+        read or change the IF gain, so this is one you keep in SDRConnect yourself. The simplest arrangement
+        by far is to find one IF setting that works acceptably on all the ports you use, set it once, and
+        leave it.
+      </p>
+      <p>
+        If you&rsquo;d like to keep track anyway, each port&rsquo;s block has a place to note what it would
+        ideally have &mdash; tick <span class="k">IF AGC on (auto)</span> or type a figure in dB. Bridge
+        shows you the spread across your ports at the top of the panel, and puts a line in the log whenever
+        you switch to a port that wants something different from the last one. It never changes the setting.
+      </p>
+    </div>
+
+    <h3>Sweeping each antenna in turn</h3>
+    <p>
+      Tick <span class="k">Include in scan rotation</span> on two or more ports and a band scan works
+      through them one full pass at a time.
+    </p>
+    <ul class="notes">
+      <li><b>A looping scan cycles round them</b> &mdash; one pass on the first, one on the next, then back
+        to the start, for as long as it runs.</li>
+      <li><b>A full band sweep does one pass on each and stops</b> &mdash; a complete sweep of the band on
+        every antenna, from one press. That&rsquo;s the straight comparison.</li>
+      <li><b>Each port keeps its own record of which channels were dead.</b> A channel that gave nothing on
+        one antenna is still checked on the others &mdash; which is the entire reason this is worth having.
+        It does mean early passes take longer than a single-antenna scan.</li>
+      <li><b>Catches are logged per port.</b> A station heard on two antennas gets a row for each, so you can
+        see which aerial actually brought it in, rather than one row that quietly mixes them.</li>
+      <li><b>Clips are written per port too</b>, with the port&rsquo;s name in the filename, so you can
+        listen to the same station on both.</li>
+      <li><b>The port you started on is put back</b> when the scan stops, along with its settings.</li>
+    </ul>
+
+    <div class="callout">
+      <p>
+        A port can only be ticked once it has settings saved. If Bridge switched to a port it couldn&rsquo;t
+        set up, that whole pass would be measured at the previous antenna&rsquo;s gain &mdash; and nothing in
+        the results would look wrong, which is the worst kind of mistake to let through. Save the port&rsquo;s
+        settings and the tick box becomes available.
+      </p>
+    </div>
+  </section>
+
   <!-- ================= BAND MAP ================= -->
   <section class="section wrap" id="map">
-    <p class="eyebrow">10 · IQ recordings only</p>
+    <p class="eyebrow">11 · IQ recordings only</p>
     <h2>Mapping a recording</h2>
     <p class="lede">
       A band recording contains far more than you heard while it played. The band map turns one into a
@@ -1061,7 +1137,7 @@ p{margin:0 0 16px}
 
   <!-- ================= DX LOG ================= -->
   <section class="section wrap" id="log">
-    <p class="eyebrow">11 · Keeping the results</p>
+    <p class="eyebrow">12 · Keeping the results</p>
     <h2>The DX log</h2>
     <p class="lede">
       Every station Bridge identifies goes into the log, with the evidence attached.
@@ -1089,7 +1165,7 @@ p{margin:0 0 16px}
 
   <!-- ================= RECORDING ================= -->
   <section class="section wrap" id="record">
-    <p class="eyebrow">12 · Keeping the audio</p>
+    <p class="eyebrow">13 · Keeping the audio</p>
     <h2>Recording what you hear</h2>
     <p class="lede">
       <b>Record</b> and <b>Stop</b> sit in the left panel. They write what Bridge is producing to a WAV file
@@ -1177,7 +1253,7 @@ p{margin:0 0 16px}
 
   <!-- ================= SETTINGS ================= -->
   <section class="section wrap" id="settings">
-    <p class="eyebrow">13 · Knobs</p>
+    <p class="eyebrow">14 · Knobs</p>
     <h2>Settings worth touching</h2>
     <p class="lede">
       Bridge works out of the box. These are the few controls that genuinely repay attention &mdash; and
@@ -1212,7 +1288,7 @@ p{margin:0 0 16px}
 
   <!-- ================= PROBLEMS ================= -->
   <section class="section wrap" id="problems">
-    <p class="eyebrow">14 · When it doesn&rsquo;t work</p>
+    <p class="eyebrow">15 · When it doesn&rsquo;t work</p>
     <h2>If something isn&rsquo;t working</h2>
 
     <div class="callout">
@@ -1367,7 +1443,7 @@ p{margin:0 0 16px}
 
   <!-- ================= HELP ================= -->
   <section class="section wrap" id="help">
-    <p class="eyebrow">15 · Still stuck</p>
+    <p class="eyebrow">16 · Still stuck</p>
     <h2>Getting help</h2>
     <p class="lede">
       Ask &mdash; that&rsquo;s what these are for. It is a one-person project, so a little detail up front
